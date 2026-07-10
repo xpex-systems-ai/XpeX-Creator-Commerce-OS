@@ -1,23 +1,24 @@
 'use client';
 
 import { ExportJsonPanel } from './components/local-forms';
-import { SafetyNotice, CampaignCard, MetricCard, ModuleCard, ProductCard, SectionHeader, StatusBadge, XpeXPageShell } from './components';
+import { SafetyNotice, OperationModeBadge, CampaignCard, MetricCard, ModuleCard, ProductCard, SectionHeader, StatusBadge, XpeXPageShell } from './components';
 import { xpexCreatorCommerceMock } from './mock-data';
 import { useXpeXCommerceStore } from './lib/use-xpex-commerce-store';
 
 export default function XpeXCommercePage() {
   const data = xpexCreatorCommerceMock;
-  const { state } = useXpeXCommerceStore();
+  const { state, mode, backendAvailability, operationNotice } = useXpeXCommerceStore();
   const metrics = [
-    { title: 'Produtos locais', value: state.products.length, detail: 'Produtos salvos no navegador' },
-    { title: 'Campanhas locais', value: state.campaigns.length, detail: 'Briefings manuais controlados' },
+    { title: 'Produtos', value: state.products.length, detail: mode === 'backend' ? 'Backend controlado com fallback local' : 'Produtos salvos no navegador' },
+    { title: 'Campanhas', value: state.campaigns.length, detail: mode === 'backend' ? 'API autenticada ou fallback local' : 'Briefings manuais controlados' },
     { title: 'Links planejados', value: state.linkPlans.length, detail: 'Slugs sem redirect real' },
     { title: 'Leads locais', value: state.leads.length, detail: 'CRM manual sem WhatsApp/API' },
     { title: 'Criativos locais', value: state.creativeBriefs.length, detail: 'Hooks e roteiros sem IA real' },
     { title: 'Criadores', value: state.creators.length, detail: 'Anderso como creator piloto' },
   ];
   return <XpeXPageShell eyebrow="Phase 04 · Local controlled operations" title="XpeX Creator Commerce OS" description="Máquina de vendas com Mercado Livre, criadores, IA, links rastreáveis, redes sociais e automação — agora com operação local controlada via localStorage, sem APIs reais e sem banco.">
-    <SafetyNotice />
+    <SafetyNotice mode={mode} availability={backendAvailability} notice={operationNotice} />
+    <OperationModeBadge mode={mode} availability={backendAvailability} notice={operationNotice} />
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">{metrics.map((module) => <MetricCard key={module.title} label={module.title} value={module.value} detail={module.detail} />)}</section>
     <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-6">
       <ModuleCard href="/xpex-commerce/products" title="Produtos ML" detail="Cadastro manual local, score e status por produto para Anderso." cta="Abrir produtos" />

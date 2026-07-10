@@ -87,6 +87,9 @@ Phase 02 adds the first internal visual surface for **XpeX Creator Commerce OS**
 
 Phase 03 expands that isolated surface into a manual operational MVP with static/mock routes for `/xpex-commerce`, `/xpex-commerce/products`, `/xpex-commerce/campaigns`, `/xpex-commerce/creators/anderso`, `/xpex-commerce/links`, and `/xpex-commerce/creatives`. These screens plan products, campaigns, creator Anderso, links, and creative briefs without adding real Mercado Livre, Dub, n8n, database, or AI API integrations.
 
+
+Phase 07 connects the XpeX Commerce frontend to the real authenticated backend in an opt-in controlled mode via `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`, while preserving localStorage/demo mode as the default fallback. Backend errors keep the UI operational locally, and Mercado Livre, Dub, n8n, OpenAI, WhatsApp, paid ads, OAuth providers, auth flow, and Postiz social publishing remain untouched.
+
 Phase 04 adds controlled local operations to `/xpex-commerce` using browser `localStorage` only. Products, campaigns, planned links, creative briefs, and the new `/xpex-commerce/leads` CRM route can be managed locally without adding a database, Prisma migration, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automation, paid ads, or secrets.
 
 Phase 05 adds a safe backend contract package for XpeX Commerce: API contract, Prisma schema draft, security plan, and localStorage-to-backend migration plan. It does not apply migrations, register live commerce endpoints, or add external integrations; the local MVP remains browser-only until a later reviewed persistence phase.
