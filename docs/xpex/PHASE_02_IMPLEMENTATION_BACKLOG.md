@@ -63,3 +63,13 @@ Phase 02 should add isolated XpeX surfaces without changing authentication, OAut
 - Risk: presenting estimates as real measured metrics.
 - Dependencies: event model and analytics source decision.
 - Acceptance: dashboard separates mock/demo, estimated, and measured values.
+
+
+## Phase 03 manual visual workflow status
+- Status: initiated as an isolated manual MVP under `/xpex-commerce` with mock/static data only.
+- Added visual routes for products, campaigns, creator Anderso, planned links, and AI creative briefs.
+- No real Mercado Livre, Dub, n8n, database persistence, Prisma migration, auth, OAuth, payment, or social publishing integration is declared or implemented in this phase.
+
+## Next milestone — Phase 04
+- Define controlled persistence and reviewed real models for products and campaigns.
+- Review backend boundaries, validation, auditability, and migration safety before adding durable data storage.

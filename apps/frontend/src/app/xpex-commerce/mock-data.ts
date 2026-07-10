@@ -1,72 +1,53 @@
 export type XpeXStatus = 'MVP' | 'Mockado' | 'Em validação' | 'Pronto para próxima fase';
-
+export type XpeXCampaignStatus = 'Planejada' | 'Em validação' | 'Pausada' | 'Vencedora';
+export type XpeXProductStatus = 'Em teste' | 'Prioridade' | 'Pausado' | 'Validado';
 export type XpeXChannel = 'Instagram' | 'TikTok' | 'WhatsApp';
 
+export const xpexProducts = [
+  { id: 'proj-portatil', name: 'Projetor portátil', category: 'Tecnologia / lifestyle', audienceFit: 'Quarto gamer, música, cinema em casa e jovens que querem transformar o ambiente.', creatorFit: 'Muito alto para Anderso: combina show, clipe, quarto e lifestyle urbano.', score: 9.2, status: 'Prioridade' as XpeXProductStatus, campaignAngle: 'Seu quarto vira palco', ctaKeyword: 'TELÃO', notes: 'Produto âncora da Fase 03; usar demonstração real no quarto, parede ou lençol branco.' },
+  { id: 'fone-bluetooth', name: 'Fone Bluetooth', category: 'Áudio / acessórios', audienceFit: 'Público jovem que consome trap, academia, deslocamento e estudos.', creatorFit: 'Alto para Anderso: conexão natural com música e bastidores de gravação.', score: 8.4, status: 'Em teste' as XpeXProductStatus, campaignAngle: 'O grave que te isola do mundo', ctaKeyword: 'GRAVE', notes: 'Explorar beat, prévia de faixa e rotina de estúdio.' },
+  { id: 'caixa-som-bluetooth', name: 'Caixa de som Bluetooth', category: 'Áudio / casa', audienceFit: 'Rolês pequenos, quarto, churrasco, ensaio e pré-party.', creatorFit: 'Alto para Anderso: produto demonstra energia e social proof.', score: 8.1, status: 'Em teste' as XpeXProductStatus, campaignAngle: 'Rolê no quarto com som de palco', ctaKeyword: 'SOM', notes: 'Mostrar antes/depois do som do celular contra a caixa.' },
+  { id: 'led-quarto', name: 'LED para quarto', category: 'Decoração / setup', audienceFit: 'Quarto gamer, estética TikTok, clipes caseiros e creators iniciantes.', creatorFit: 'Muito alto para Anderso: eleva estética do vídeo e do quarto palco.', score: 8.8, status: 'Validado' as XpeXProductStatus, campaignAngle: 'Luz de clipe no seu quarto', ctaKeyword: 'LED', notes: 'Combinar com projetor para pacote quarto palco.' },
+  { id: 'microfone-lapela', name: 'Microfone de lapela', category: 'Creator gear / áudio', audienceFit: 'Criadores iniciantes, reviews, entrevistas e vídeos de bastidor.', creatorFit: 'Médio/alto para Anderso: útil para bastidores e fala direta.', score: 7.9, status: 'Em teste' as XpeXProductStatus, campaignAngle: 'Sua voz limpa no vídeo', ctaKeyword: 'MIC', notes: 'Explicar diferença de áudio sem parecer anúncio técnico.' },
+  { id: 'ring-light', name: 'Ring light', category: 'Iluminação / creator gear', audienceFit: 'Criadores, maquiagem, lives, reviews e gravação à noite.', creatorFit: 'Médio para Anderso: funciona como apoio de gravação.', score: 7.4, status: 'Pausado' as XpeXProductStatus, campaignAngle: 'Grava bonito até de madrugada', ctaKeyword: 'LUZ', notes: 'Usar como produto secundário depois de validar projetor e LED.' },
+] as const;
+
+export const xpexCampaigns = [
+  { id: 'quarto-palco', name: 'Seu quarto vira palco', productId: 'proj-portatil', product: 'Projetor portátil', creator: 'Anderso', cta: 'Comenta TELÃO', channels: ['Instagram', 'TikTok', 'WhatsApp'] as XpeXChannel[], score: 9.1, status: 'Em validação' as XpeXCampaignStatus, briefing: 'Anderso entra no quarto apagado, liga o projetor, coloca beat/clipe na parede e mostra a transformação do ambiente.' },
+  { id: 'grave-isola', name: 'O grave que te isola do mundo', productId: 'fone-bluetooth', product: 'Fone Bluetooth', creator: 'Anderso', cta: 'Comenta GRAVE', channels: ['Instagram', 'TikTok'] as XpeXChannel[], score: 8.3, status: 'Planejada' as XpeXCampaignStatus, briefing: 'Gancho com barulho externo, corte para Anderso ouvindo beat com foco total.' },
+  { id: 'som-palco', name: 'Rolê no quarto com som de palco', productId: 'caixa-som-bluetooth', product: 'Caixa de som Bluetooth', creator: 'Anderso', cta: 'Comenta SOM', channels: ['Instagram', 'WhatsApp'] as XpeXChannel[], score: 8.0, status: 'Planejada' as XpeXCampaignStatus, briefing: 'Comparativo som celular vs caixa com reação de amigos.' },
+  { id: 'luz-clipe', name: 'Luz de clipe no seu quarto', productId: 'led-quarto', product: 'LED para quarto', creator: 'Anderso', cta: 'Comenta LED', channels: ['TikTok', 'Instagram'] as XpeXChannel[], score: 8.6, status: 'Vencedora' as XpeXCampaignStatus, briefing: 'Transição do quarto comum para cenário de clipe com LED.' },
+  { id: 'voz-limpa', name: 'Sua voz limpa no vídeo', productId: 'microfone-lapela', product: 'Microfone de lapela', creator: 'Anderso', cta: 'Comenta MIC', channels: ['Instagram', 'TikTok'] as XpeXChannel[], score: 7.7, status: 'Planejada' as XpeXCampaignStatus, briefing: 'Teste A/B de áudio no bastidor de uma gravação.' },
+  { id: 'grava-madrugada', name: 'Grava bonito até de madrugada', productId: 'ring-light', product: 'Ring light', creator: 'Anderso', cta: 'Comenta LUZ', channels: ['Instagram'] as XpeXChannel[], score: 7.1, status: 'Pausada' as XpeXCampaignStatus, briefing: 'Produto de apoio; pausar até validar ângulo menos genérico.' },
+] as const;
+
+export const xpexCreatorAnderso = {
+  name: 'Anderso', niche: 'Cantor de trap com público jovem', audience: 'Jovens conectados a música, lifestyle, quarto gamer e cultura urbana', channels: ['Instagram', 'TikTok', 'WhatsApp'] as XpeXChannel[], communicationStyle: 'Direto, visual, aspiracional e natural; falar como bastidor real, não como vendedor forçado.', recommendedProducts: ['Projetor portátil', 'LED para quarto', 'Fone Bluetooth', 'Caixa de som Bluetooth', 'Microfone de lapela'], recordingBrief: ['Abrir com quarto comum e luz baixa.', 'Ligar o projetor com clipe/visual na parede.', 'Mostrar reação real: “meu quarto virou palco”.', 'Encerrar com CTA simples: Comenta TELÃO.'], positioningRules: ['Não parecer vendedor forçado.', 'Usar produto real em cena.', 'Mostrar experiência e transformação.', 'CTA simples, curto e comentável.'], contentCalendar: [
+    'Dia 1: Reels transformação do quarto com projetor.', 'Dia 2: Story enquete “qual parede vira telão?”.', 'Dia 3: TikTok bastidor com beat e projetor.', 'Dia 4: WhatsApp lista VIP com slug planejado.', 'Dia 5: Reels comparando quarto comum vs palco.', 'Dia 6: Story perguntas sobre setup barato.', 'Dia 7: TikTok compilado de comentários TELÃO.',
+  ],
+} as const;
+
+export const xpexPlannedLinks = [
+  { campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', channel: 'Instagram' as XpeXChannel, slug: '/telao-anderso-instagram', status: 'Planejado — sem redirecionamento real' },
+  { campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', channel: 'TikTok' as XpeXChannel, slug: '/telao-anderso-tiktok', status: 'Planejado — sem redirecionamento real' },
+  { campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', channel: 'WhatsApp' as XpeXChannel, slug: '/telao-whatsapp', status: 'Planejado — sem redirecionamento real' },
+] as const;
+
+export const xpexCreativeBrief = {
+  campaign: 'Seu quarto vira palco', hooks: ['Seu quarto parece normal até isso ligar.', 'POV: você transformou a parede em palco.', 'O setup mais barato pra deixar o quarto com cara de clipe.'], slogans: ['Seu quarto vira palco.', 'TELÃO no quarto, vibe de show.', 'Do beat ao telão em segundos.'], captions: ['Comenta TELÃO que eu te mando o setup planejado.', 'Se teu quarto tivesse um palco, qual clipe você colocaria primeiro?', 'Esse é o tipo de produto que muda a vibe do quarto sem obra.'], stories: ['Enquete: parede branca ou lençol?', 'Caixa de pergunta: quer link do projetor?', 'Bastidor: testando distância ideal do telão.'], reelsScript: 'Cena 1: quarto escuro. Cena 2: Anderso liga projetor. Cena 3: beat toca e parede vira telão. Cena 4: CTA Comenta TELÃO.', tiktokScript: 'Gancho rápido, corte seco para transformação, legenda grande TELÃO, reação natural e CTA no comentário fixado.', whatsappText: 'Família, montei um setup visual pra transformar o quarto em telão. Quem quiser o link planejado comenta TELÃO aqui.', imagePrompt: 'Quarto urbano à noite com projetor portátil exibindo visual de show na parede, estética trap premium, luz azul e dourada, sem marcas reais.', recordingChecklist: ['Produto em cena', 'Antes e depois claro', 'Áudio limpo', 'CTA verbal e na legenda', 'Sem prometer preço/resultado irreal', 'Informar que link ainda é planejado no MVP'],
+} as const;
+
 export const xpexCreatorCommerceMock = {
-  creator: {
-    name: 'Anderso',
-    profile: 'Cantor de trap com público jovem',
-    audience: 'Jovens conectados a música, lifestyle, quarto gamer e cultura urbana',
-    channels: ['Instagram', 'TikTok', 'WhatsApp'] as XpeXChannel[],
-    status: 'MVP' as XpeXStatus,
-  },
-  product: {
-    name: 'Projetor portátil',
-    category: 'Tecnologia / lifestyle',
-    status: 'Em validação' as XpeXStatus,
-    score: 8.5,
-    pricingNote: 'Preço fixo ainda não obrigatório no MVP visual',
-  },
-  campaign: {
-    name: 'Seu quarto vira palco',
-    cta: 'Comenta TELÃO',
-    channels: ['Instagram', 'TikTok', 'WhatsApp'] as XpeXChannel[],
-    status: 'MVP' as XpeXStatus,
-    promise: 'Transformar o quarto do público em uma experiência de show e cinema particular.',
-  },
-  metrics: {
-    clicks: 1240,
-    leads: 186,
-    plannedPosts: 9,
-    generatedCreatives: 27,
-    campaignScore: 8.7,
-    complianceStatus: 'Aprovado para demonstração interna com dados mockados',
-  },
+  creator: { name: xpexCreatorAnderso.name, profile: xpexCreatorAnderso.niche, audience: xpexCreatorAnderso.audience, channels: xpexCreatorAnderso.channels, status: 'MVP' as XpeXStatus },
+  product: { ...xpexProducts[0], pricingNote: 'Preço fixo ainda não obrigatório no MVP visual' },
+  campaign: { name: xpexCampaigns[0].name, cta: xpexCampaigns[0].cta, channels: xpexCampaigns[0].channels, status: 'MVP' as XpeXStatus, promise: 'Transformar o quarto do público em uma experiência de show e cinema particular.' },
+  metrics: { clicks: 1240, leads: 186, plannedPosts: 9, generatedCreatives: 27, campaignScore: 8.7, complianceStatus: 'Aprovado para demonstração interna com dados mockados' },
   modules: [
-    { title: 'Produtos ML', value: '1', detail: 'Produto inicial em validação manual' },
-    { title: 'Campanhas', value: '1', detail: 'Brief e CTA definidos para MVP' },
-    { title: 'Criadores', value: '1', detail: 'Anderso como creator piloto' },
-    { title: 'Links', value: '3', detail: 'Fontes planejadas por canal' },
-    { title: 'Leads', value: '186', detail: 'Intenção capturada via CTA mockado' },
-    { title: 'Métricas', value: '8.7', detail: 'Score consolidado da campanha' },
+    { title: 'Produtos em teste', value: xpexProducts.length, detail: 'Produtos mockados para cadastro manual' }, { title: 'Campanhas', value: xpexCampaigns.length, detail: 'Ângulos planejados por produto' }, { title: 'Criadores', value: '1', detail: 'Anderso como creator piloto' }, { title: 'Links', value: xpexPlannedLinks.length, detail: 'Slugs planejados por canal' }, { title: 'Leads', value: '186', detail: 'Intenção capturada via CTA mockado' }, { title: 'Criativos', value: '27', detail: 'Variações planejadas sem IA real' },
   ],
-  funnel: [
-    'Produto',
-    'Radar IA',
-    'Criativo',
-    'Link',
-    'Postagem',
-    'Lead',
-    'Métrica',
-    'Otimização',
-  ],
+  funnel: ['Produto', 'Radar IA', 'Criativo', 'Link', 'Postagem', 'Lead', 'Métrica', 'Otimização'],
   agents: [
-    { name: 'Radar de Produto', status: 'Mockado', role: 'Avalia potencial, categoria e ângulos comerciais do produto.' },
-    { name: 'Copywriter', status: 'Mockado', role: 'Cria hooks, CTAs, legendas e variações para cada canal.' },
-    { name: 'Diretor de Vídeo', status: 'Mockado', role: 'Organiza roteiro curto, cenas e ritmo para Reels e TikTok.' },
-    { name: 'Criativo Visual', status: 'Mockado', role: 'Define direção visual premium sem depender de imagens externas.' },
-    { name: 'Publicador', status: 'Mockado', role: 'Planeja distribuição, sem alterar lógica social existente.' },
-    { name: 'Links/Tracking', status: 'Mockado', role: 'Planeja links rastreáveis para Instagram, TikTok e WhatsApp.' },
-    { name: 'CRM', status: 'Mockado', role: 'Agrupa leads por intenção, canal e próxima ação manual.' },
-    { name: 'Métricas', status: 'Mockado', role: 'Consolida cliques, leads, criativos e score de campanha.' },
-    { name: 'Compliance', status: 'Mockado', role: 'Sinaliza restrições, claims e aprovação humana.' },
-    { name: 'Growth', status: 'Mockado', role: 'Sugere próximos experimentos e otimizações controladas.' },
+    { name: 'Radar de Produto', status: 'Mockado', role: 'Avalia potencial, categoria e ângulos comerciais do produto.' }, { name: 'Copywriter', status: 'Mockado', role: 'Cria hooks, CTAs, legendas e variações para cada canal.' }, { name: 'Diretor de Vídeo', status: 'Mockado', role: 'Organiza roteiro curto, cenas e ritmo para Reels e TikTok.' }, { name: 'Criativo Visual', status: 'Mockado', role: 'Define direção visual premium sem depender de imagens externas.' }, { name: 'Publicador', status: 'Mockado', role: 'Planeja distribuição, sem alterar lógica social existente.' }, { name: 'Links/Tracking', status: 'Mockado', role: 'Planeja links rastreáveis para Instagram, TikTok e WhatsApp.' }, { name: 'CRM', status: 'Mockado', role: 'Agrupa leads por intenção, canal e próxima ação manual.' }, { name: 'Métricas', status: 'Mockado', role: 'Consolida cliques, leads, criativos e score de campanha.' }, { name: 'Compliance', status: 'Mockado', role: 'Sinaliza restrições, claims e aprovação humana.' }, { name: 'Growth', status: 'Mockado', role: 'Sugere próximos experimentos e otimizações controladas.' },
   ],
-  nextSteps: [
-    'Produto manual',
-    'Campanha manual',
-    'Criador Anderso',
-    'Links rastreáveis',
-    'CRM',
-  ],
+  nextSteps: ['Cadastro manual de produto', 'Briefing de campanha', 'Criador Anderso', 'Links planejados', 'Criativos IA mockados', 'Fase 04: persistência controlada'],
 } as const;

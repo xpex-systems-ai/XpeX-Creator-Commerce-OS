@@ -84,6 +84,8 @@ See the detailed architecture in [`docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md`](
 
 Phase 02 adds the first internal visual surface for **XpeX Creator Commerce OS** at `/xpex-commerce`. It is a premium dashboard MVP with typed mock data for Anderso, the portable projector campaign, AI agents, funnel, links, leads, and metrics; real integrations remain reserved for future reviewed phases.
 
+Phase 03 expands that isolated surface into a manual operational MVP with static/mock routes for `/xpex-commerce`, `/xpex-commerce/products`, `/xpex-commerce/campaigns`, `/xpex-commerce/creators/anderso`, `/xpex-commerce/links`, and `/xpex-commerce/creatives`. These screens plan products, campaigns, creator Anderso, links, and creative briefs without adding real Mercado Livre, Dub, n8n, database, or AI API integrations.
+
 Build/deploy note: this fork avoids mandatory external build-time dependencies where possible, including remote font resolution, so XpeX can be deployed more reliably in restricted environments while preserving the Postiz foundation.
 
 ## 🔌 See the leading Postiz features
