@@ -1,0 +1,52 @@
+import type { XpeXCommerceLocalState } from './types';
+
+const STORAGE_KEY = 'xpex-commerce-local-operations-v1';
+let memoryState: XpeXCommerceLocalState | null = null;
+const now = () => new Date().toISOString();
+
+export function seedXpeXLocalState(): XpeXCommerceLocalState {
+  const timestamp = now();
+  return {
+    version: 1,
+    lastUpdatedAt: timestamp,
+    creators: [{ id: 'creator-anderso', name: 'Anderso', niche: 'Cantor de trap com público jovem', audience: 'Jovens conectados a música, lifestyle, quarto gamer e cultura urbana', channels: ['Instagram', 'TikTok', 'WhatsApp'], status: 'Aprovado', notes: 'Criador piloto para validar operação local controlada.', createdAt: timestamp, updatedAt: timestamp }],
+    products: [{ id: 'product-projetor-portatil', name: 'Projetor portátil', category: 'Tecnologia / lifestyle', mercadoLivreUrl: '', audienceFit: 'Quarto gamer, música, cinema em casa e jovens que querem transformar o ambiente.', creator: 'Anderso', creatorFit: 'Muito alto para Anderso: combina show, clipe, quarto e lifestyle urbano.', campaignAngle: 'Seu quarto vira palco', ctaKeyword: 'TELÃO', score: 9.2, status: 'Em campanha', notes: 'Produto âncora da Fase 04; usar demonstração manual, sem integração Mercado Livre.', createdAt: timestamp, updatedAt: timestamp }],
+    campaigns: [{ id: 'campaign-seu-quarto-vira-palco', name: 'Seu quarto vira palco', productId: 'product-projetor-portatil', product: 'Projetor portátil', creator: 'Anderso', slogan: 'Seu quarto vira palco.', cta: 'Comenta TELÃO', channels: ['Instagram', 'TikTok', 'WhatsApp'], status: 'Em validação', expectedMetric: 'Leads manuais por comentário/DM planejada', score: 9.1, briefing: 'Anderso entra no quarto apagado, liga o projetor, coloca beat/clipe na parede e mostra a transformação do ambiente.', createdAt: timestamp, updatedAt: timestamp }],
+    creativeBriefs: [{ id: 'creative-quarto-palco', campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', hook: 'Seu quarto parece normal até isso ligar.', slogan: 'Seu quarto vira palco.', caption: 'Comenta TELÃO que eu te mando o setup planejado.', shortScript: 'Quarto escuro, projetor ligado, beat tocando e transformação visual.', whatsappText: 'Família, montei um setup visual pra transformar o quarto em telão.', status: 'Planejado', createdAt: timestamp, updatedAt: timestamp }],
+    linkPlans: [{ id: 'link-telao-anderso-instagram', campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', channel: 'Instagram', slug: '/telao-anderso-instagram', destinationUrl: '', status: 'Planejado', notes: 'Slug planejado; provedor de links entra em fase futura.', createdAt: timestamp, updatedAt: timestamp }],
+    leads: [{ id: 'lead-demo-telao', name: 'Lead demo TELÃO', channel: 'Instagram', interestedProduct: 'Projetor portátil', campaign: 'Seu quarto vira palco', creator: 'Anderso', status: 'Novo', observation: 'Exemplo local para validar CRM sem WhatsApp/API.', createdAt: timestamp, updatedAt: timestamp }],
+  };
+}
+
+const isBrowser = () => typeof window !== 'undefined' && Boolean(window.localStorage);
+
+export function getXpeXLocalState(): XpeXCommerceLocalState {
+  if (!isBrowser()) return memoryState ?? (memoryState = seedXpeXLocalState());
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return saveXpeXLocalState(seedXpeXLocalState());
+    const parsed = JSON.parse(raw) as XpeXCommerceLocalState;
+    if (parsed?.version !== 1) return saveXpeXLocalState(seedXpeXLocalState());
+    return parsed;
+  } catch {
+    return saveXpeXLocalState(seedXpeXLocalState());
+  }
+}
+
+export function saveXpeXLocalState(state: XpeXCommerceLocalState): XpeXCommerceLocalState {
+  const next = { ...state, lastUpdatedAt: now() };
+  memoryState = next;
+  if (isBrowser()) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  return next;
+}
+
+export function resetXpeXLocalState(): XpeXCommerceLocalState {
+  const seeded = seedXpeXLocalState();
+  memoryState = seeded;
+  if (isBrowser()) window.localStorage.removeItem(STORAGE_KEY);
+  return saveXpeXLocalState(seeded);
+}
+
+export function exportXpeXLocalStateJson(): string {
+  return JSON.stringify(getXpeXLocalState(), null, 2);
+}
