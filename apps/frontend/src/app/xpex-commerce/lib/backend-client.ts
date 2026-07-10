@@ -3,7 +3,11 @@ import type { XpeXCommerceCampaign, XpeXCommerceCreativeBrief, XpeXCommerceLead,
 type ApiResult<T> = { ok: true; data: T } | { ok: false; error: string; status?: number };
 type BackendRecord = Record<string, any>;
 export type XpeXBackendDiagnostics = { moduleEnabled: boolean; organizationScoped: boolean; prismaAvailable: boolean; timestamp: string; supportedResources: string[] };
-const base = '/xpex-commerce';
+export function getXpeXCommerceApiBase() {
+  return '/api/xpex-commerce';
+}
+
+const base = getXpeXCommerceApiBase();
 
 async function request<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
   try {
