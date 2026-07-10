@@ -5,7 +5,7 @@ Phase 06 implements the first authenticated, organization-scoped backend endpoin
 
 ## Phase 07 frontend connection state
 
-The frontend now has an opt-in backend mode guarded by `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`. Without that public flag, `/xpex-commerce` stays in localStorage demo mode. When the flag is enabled, the frontend uses relative authenticated requests to the routes in this contract and falls back to localStorage on network/API errors. No browser token storage, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automation, paid ads automation, OAuth change, or Postiz social publishing change is introduced by this connection layer.
+The frontend now has an opt-in backend mode guarded by `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`. Without that public flag, `/xpex-commerce` stays in localStorage demo mode. When the flag is enabled, the frontend uses relative authenticated requests through the public proxy path `/api/xpex-commerce` for the routes in this contract and falls back to localStorage on network/API errors. No browser token storage, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automation, paid ads automation, OAuth change, or Postiz social publishing change is introduced by this connection layer.
 
 ## Common rules
 
@@ -152,3 +152,24 @@ Prisma persistence model exists in Phase 06, but API endpoints remain planned un
 ## Compliance checks — planned
 
 Prisma persistence model exists in Phase 06, but API endpoints remain planned until the review workflow and approval semantics are finalized.
+
+## Phase 08 diagnostics and homologation
+
+Phase 08 adds a safe authenticated diagnostics route for backend homologation before external integrations.
+
+- Nest controller route: `GET /xpex-commerce/diagnostics`
+- Browser/proxy route consumed by the frontend: `GET /api/xpex-commerce/diagnostics`
+
+Response contains only safe technical readiness fields:
+
+```json
+{
+  "moduleEnabled": true,
+  "organizationScoped": true,
+  "prismaAvailable": true,
+  "timestamp": "2026-07-10T00:00:00.000Z",
+  "supportedResources": ["products", "campaigns", "creators", "leads", "link-plans", "creative-briefs"]
+}
+```
+
+The Nest route is mounted inside the existing authenticated XpeX Commerce controller and derives organization scope from the request context. It must not return user records, lead payloads, provider tokens, private URLs, infrastructure details, secrets, or API keys. The frontend calls it only through the relative `/api/xpex-commerce/diagnostics` proxy path when `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`; failures keep the localStorage fallback active.

@@ -20,6 +20,8 @@ import { XpeXCommerceService } from '@gitroom/backend/api/routes/xpex-commerce/x
 export class XpeXCommerceController {
   constructor(private service: XpeXCommerceService) {}
 
+  @Get('/diagnostics') diagnostics(@GetOrgFromRequest() org: Organization) { return this.service.getDiagnostics(org.id); }
+
   @Get('/products') listProducts(@GetOrgFromRequest() org: Organization) { return this.service.listProducts(org.id); }
   @Get('/products/:id') getProduct(@GetOrgFromRequest() org: Organization, @Param('id') id: string) { return this.service.getProduct(org.id, id); }
   @Post('/products') createProduct(@GetOrgFromRequest() org: Organization, @Body() body: XpeXProductDto) { return this.service.createProduct(org.id, body); }

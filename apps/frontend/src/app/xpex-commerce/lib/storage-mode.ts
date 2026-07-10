@@ -1,5 +1,5 @@
 export type XpeXStorageMode = 'local' | 'backend';
-export type XpeXBackendAvailability = 'disabled' | 'checking' | 'available' | 'unavailable';
+export type XpeXBackendAvailability = 'disabled' | 'checking' | 'available' | 'unavailable' | 'fallback';
 
 const BACKEND_FLAG = 'NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED';
 
@@ -22,6 +22,10 @@ export function getXpeXStorageModeDescription(mode: XpeXStorageMode, availabilit
 
   if (availability === 'available') {
     return 'Backend controlado habilitado. Mercado Livre, Dub, n8n, OpenAI e anúncios pagos continuam desconectados.';
+  }
+
+  if (availability === 'fallback') {
+    return 'Backend habilitado apresentou falha em homologação. Fallback localStorage está ativo para preservar a operação.';
   }
 
   if (availability === 'unavailable') {

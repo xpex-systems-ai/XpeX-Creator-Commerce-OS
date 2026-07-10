@@ -13,11 +13,11 @@ export function XpeXPageShell({ eyebrow, title, description, children }: { eyebr
 export function SafetyNotice({ mode = 'local', availability = 'disabled', notice }: { mode?: XpeXStorageMode; availability?: XpeXBackendAvailability; notice?: string }) {
   const label = getXpeXStorageModeLabel(mode);
   const description = notice || getXpeXStorageModeDescription(mode, availability);
-  return <aside className="rounded-[2rem] border border-[#22C55E]/25 bg-[#22C55E]/10 p-5 text-sm leading-6 text-white/72"><strong className="text-[#B8FFD0]">{label}:</strong> {description} WhatsApp, integrações externas e automações de anúncio pago seguem desconectados.</aside>;
+  return <aside className="rounded-[2rem] border border-[#22C55E]/25 bg-[#22C55E]/10 p-5 text-sm leading-6 text-white/72"><strong className="text-[#B8FFD0]">{label} · Homologação segura:</strong> {description} Mercado Livre, Dub, n8n, OpenAI, WhatsApp e anúncios pagos seguem desconectados.</aside>;
 }
 
 export function OperationModeBadge({ mode, availability, notice }: { mode: XpeXStorageMode; availability: XpeXBackendAvailability; notice: string }) {
-  return <section className="rounded-[2rem] border border-[#8DB4FF]/25 bg-[#8DB4FF]/10 p-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-sm font-bold uppercase tracking-[0.28em] text-[#8DB4FF]">Status da operação</p><h2 className="mt-2 text-2xl font-black text-white">{getXpeXStorageModeLabel(mode)}</h2></div><StatusBadge>{availability}</StatusBadge></div><p className="mt-4 text-sm leading-6 text-white/70">{notice}</p></section>;
+  return <section className="rounded-[2rem] border border-[#8DB4FF]/25 bg-[#8DB4FF]/10 p-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-sm font-bold uppercase tracking-[0.28em] text-[#8DB4FF]">Status da operação</p><h2 className="mt-2 text-2xl font-black text-white">{getXpeXStorageModeLabel(mode)}</h2></div><StatusBadge>{availability}</StatusBadge></div><p className="mt-4 text-sm leading-6 text-white/70">{notice}</p><p className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-[#B8FFD0]">Backend controlado em homologação; integrações externas desligadas.</p></section>;
 }
 
 export function StatusBadge({ children }: { children: ReactNode }) { return <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">{children}</span>; }

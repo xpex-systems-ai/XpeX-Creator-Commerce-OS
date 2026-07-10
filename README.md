@@ -92,6 +92,8 @@ Phase 07 connects the XpeX Commerce frontend to the real authenticated backend i
 
 Phase 04 adds controlled local operations to `/xpex-commerce` using browser `localStorage` only. Products, campaigns, planned links, creative briefs, and the new `/xpex-commerce/leads` CRM route can be managed locally without adding a database, Prisma migration, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automation, paid ads, or secrets.
 
+Phase 08 adds safe backend homologation for XpeX Commerce: an authenticated diagnostics route, a dashboard readiness panel, CRUD smoke-test documentation, and migration readiness checklist. Backend use remains opt-in with `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`; localStorage demo and fallback behavior remain preserved, and Mercado Livre, Dub, n8n, OpenAI, WhatsApp, and paid ads integrations remain disconnected.
+
 Phase 05 adds a safe backend contract package for XpeX Commerce: API contract, Prisma schema draft, security plan, and localStorage-to-backend migration plan. It does not apply migrations, register live commerce endpoints, or add external integrations; the local MVP remains browser-only until a later reviewed persistence phase.
 
 Build/deploy note: this fork avoids mandatory external build-time dependencies where possible, including remote font resolution, so XpeX can be deployed more reliably in restricted environments while preserving the Postiz foundation.

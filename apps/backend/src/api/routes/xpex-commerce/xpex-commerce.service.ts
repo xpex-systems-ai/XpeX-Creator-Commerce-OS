@@ -15,6 +15,17 @@ import {
 export class XpeXCommerceService {
   constructor(private prisma: PrismaService) {}
 
+  async getDiagnostics(orgId: string) {
+    await this.prisma.xpeXCommerceProduct.count({ where: { organizationId: orgId } });
+    return {
+      moduleEnabled: true,
+      organizationScoped: Boolean(orgId),
+      prismaAvailable: true,
+      timestamp: new Date().toISOString(),
+      supportedResources: ['products', 'campaigns', 'creators', 'leads', 'link-plans', 'creative-briefs'],
+    };
+  }
+
   private async requireOwned(model: 'xpeXCommerceProduct' | 'xpeXCommerceCreator' | 'xpeXCommerceCampaign', orgId: string, id?: string) {
     if (!id) return;
     const record = await (this.prisma[model] as any).findFirst({ where: { id, organizationId: orgId }, select: { id: true } });
