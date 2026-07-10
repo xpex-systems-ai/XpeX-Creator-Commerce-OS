@@ -1,0 +1,17 @@
+import { CampaignLaunchChecklist, ManualApprovalNotice, SafetyNotice, SectionHeader, XpeXPageShell } from '../../components';
+import { xpexPhase10PilotOperation } from '../../lib/pilot-operation';
+
+const variations = ['Trap/lifestyle: Anderso liga o projetor com beat e estética de clipe.', 'Cinema no quarto: parede vira telão para filme com luz baixa.', 'Gameplay: jogo projetado na parede com reação rápida.', 'Casal/amigos: resenha vendo clipe ou jogo no quarto.', 'Presente criativo: ideia acessível para transformar ambiente sem obra.'];
+const compliance = ['Sem promessa enganosa de preço, renda, viralização ou resultado garantido.', 'Sem preço falso: conferir valor manualmente antes de falar ou publicar.', 'Sem marca não autorizada ou uso de logo sem permissão.', 'Sem garantia inventada: citar somente informações verificadas.', 'Sem coleta de dado sensível; leads são intenção manual e consentida.'];
+
+export default function SeuQuartoViraPalcoPage() {
+  const pilot = xpexPhase10PilotOperation;
+  return <XpeXPageShell eyebrow="Campanha piloto · Fase 10" title="Seu quarto vira palco" description="Brief comercial manual para projetor portátil, criado para validar a primeira campanha real controlada com Anderso.">
+    <SafetyNotice notice="Campanha em revisão real interna: dados manuais/editáveis, sem Mercado Livre API, sem Dub e sem automações externas." />
+    <ManualApprovalNotice />
+    <section className="grid gap-5 lg:grid-cols-2"><article className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-7"><SectionHeader eyebrow="Promessa principal" title={pilot.campaign.promise} description={pilot.campaign.audience} /><div className="mt-5 space-y-3 text-white/70"><p><strong>Dor:</strong> quarto sem graça, tela pequena, setup sem estética para vídeo.</p><p><strong>Desejo:</strong> cinema, palco, gameplay e resenha com visual forte sem reforma.</p><p><strong>Objeções:</strong> preço, qualidade de imagem, distância, parede disponível e entrega.</p><p><strong>CTAs:</strong> Comenta TELÃO, responde TELÃO, pede o link revisado.</p></div></article><article className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-7"><SectionHeader eyebrow="Roteiro curto" title="15 segundos" /><ol className="mt-5 space-y-3 text-white/70"><li>1. Mostrar quarto comum e texto: “parece normal até isso ligar”.</li><li>2. Ligar projetor e cortar para parede iluminada.</li><li>3. Anderso reage com beat/clipe/gameplay.</li><li>4. CTA: “Comenta TELÃO que eu mando o link revisado”.</li></ol></article></section>
+    <section className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-7"><SectionHeader eyebrow="Variações de criativo" title="Ângulos para testar manualmente" /><div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-3">{variations.map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-white/70">{item}</div>)}</div></section>
+    <section className="grid gap-5 lg:grid-cols-2">{pilot.creativeBriefs.map((brief) => <article key={brief.format} className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-6"><SectionHeader eyebrow={brief.format} title={brief.hook} description={brief.script15s} /><p className="mt-4 text-white/70">Legenda: {brief.caption}</p><p className="mt-3 text-white/70">CTA: {brief.cta}</p><p className="mt-3 text-white/60">Thumbnail: {brief.thumbnail}</p></article>)}</section>
+    <CampaignLaunchChecklist items={compliance} />
+  </XpeXPageShell>;
+}
