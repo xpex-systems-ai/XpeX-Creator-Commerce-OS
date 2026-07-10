@@ -10,7 +10,7 @@ export function XpeXPageShell({ eyebrow, title, description, children }: { eyebr
 
 
 export function SafetyNotice() {
-  return <aside className="rounded-[2rem] border border-[#22C55E]/25 bg-[#22C55E]/10 p-5 text-sm leading-6 text-white/72"><strong className="text-[#B8FFD0]">MVP manual seguro:</strong> a operação continua localStorage/demo neste navegador. A Fase 05 prepara contrato backend e schema draft, mas ainda não grava em banco real nem chama Mercado Livre, links, n8n, IA, WhatsApp ou integrações externas.</aside>;
+  return <aside className="rounded-[2rem] border border-[#22C55E]/25 bg-[#22C55E]/10 p-5 text-sm leading-6 text-white/72"><strong className="text-[#B8FFD0]">MVP manual seguro:</strong> a operação continua localStorage/demo neste navegador. A Fase 06 prepara/implanta backend real controlado, mas esta interface ainda não chama a API real; Mercado Livre, Dub, n8n, OpenAI/IA, WhatsApp e integrações externas seguem desconectados.</aside>;
 }
 
 export function StatusBadge({ children }: { children: ReactNode }) { return <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/80">{children}</span>; }

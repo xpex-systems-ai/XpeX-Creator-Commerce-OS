@@ -1,197 +1,149 @@
-# XpeX Commerce API contract draft
+# XpeX Commerce API contract
 
-Phase 05 contract only. These endpoints are planned and not implemented in this phase. All future routes must be authenticated, organization-scoped, validated, audited, and free of provider secrets in request/response payloads.
+Phase 06 implements the first authenticated, organization-scoped backend endpoints for manual XpeX Commerce persistence. The API still avoids Mercado Livre, Dub, n8n, OpenAI, paid ads, OAuth/provider changes, redirects, and provider secrets.
 
-## Common response envelope
+## Common rules
 
-```json
-{
-  "data": {},
-  "meta": {
-    "organizationId": "org_example",
-    "requestId": "req_example"
-  }
-}
-```
+- `organizationId` is never accepted from payloads; it is derived from authenticated request context.
+- Payload keys matching token, secret, API key, password, or credential patterns are rejected.
+- External URLs are parsed and must use `http` or `https`; `javascript:`, `data:`, and unsafe protocols are blocked.
+- Scores are integers from `0` to `10`.
+- Record status enum: `DRAFT`, `ACTIVE`, `PAUSED`, `ARCHIVED`.
+- Lead status enum: `NEW`, `QUALIFIED`, `CONTACTED`, `CONVERTED`, `ARCHIVED`.
+- Physical delete is not implemented; archive through status instead.
 
-## Common status codes
+## Products — implemented
 
-- `200 OK` for successful reads/updates.
-- `201 Created` for successful creates.
-- `400 Bad Request` for validation errors.
-- `401 Unauthorized` when the request is not authenticated.
-- `403 Forbidden` when the user lacks organization permission.
-- `404 Not Found` when a record does not exist in the organization scope.
-- `409 Conflict` for duplicate slugs/import conflicts.
-- `422 Unprocessable Entity` for semantically invalid campaign/link relationships.
+- `GET /xpex-commerce/products`
+- `POST /xpex-commerce/products`
+- `GET /xpex-commerce/products/:id`
+- `PATCH /xpex-commerce/products/:id/status`
 
-## Products
-
-- `GET /xpex-commerce/products` — list products for the current organization.
-- `POST /xpex-commerce/products` — create a product.
-- `GET /xpex-commerce/products/:id` — read one product.
-- `PATCH /xpex-commerce/products/:id` — update editable fields/status.
-
-Payload example:
+Create payload:
 
 ```json
 {
-  "name": "Produto demo",
-  "category": "Tecnologia",
-  "mercadoLivreUrl": "https://example.test/produto-demo",
-  "audienceFit": "Resumo do público",
-  "creatorFit": "Resumo do fit com creator",
-  "campaignAngle": "Ângulo de campanha",
-  "ctaKeyword": "DEMO",
+  "title": "Produto demo",
+  "sourceUrl": "https://example.test/produto-demo",
+  "imageUrl": "https://example.test/produto-demo.png",
+  "currency": "BRL",
   "score": 8,
-  "status": "Em análise",
   "notes": "Notas sem segredo"
 }
 ```
 
-Validations: name required, score 0-10, URLs sanitized, status enum. Permissions: `xpexCommerce.read/create/update`.
-
-## Campaigns
+## Campaigns — implemented
 
 - `GET /xpex-commerce/campaigns`
 - `POST /xpex-commerce/campaigns`
 - `GET /xpex-commerce/campaigns/:id`
-- `PATCH /xpex-commerce/campaigns/:id`
+- `PATCH /xpex-commerce/campaigns/:id/status`
 
-Payload example:
+Create payload:
 
 ```json
 {
   "name": "Campanha demo",
-  "productId": "product_demo",
-  "creatorId": "creator_demo",
+  "productId": "product_id_optional",
+  "creatorId": "creator_id_optional",
   "slogan": "Slogan demo",
   "cta": "Comenta DEMO",
-  "channels": ["Instagram", "TikTok"],
-  "status": "Planejado",
-  "expectedMetric": "Leads manuais",
-  "score": 7,
-  "briefing": "Briefing seguro"
+  "channels": "[\"Instagram\",\"TikTok\"]",
+  "score": 7
 }
 ```
 
-Validations: referenced product/creator must belong to organization, channel enum, score range. Permissions: `xpexCommerce.read/create/update`.
+Referenced product and creator IDs must belong to the current organization.
 
-## Creators
+## Creators — implemented
 
 - `GET /xpex-commerce/creators`
 - `POST /xpex-commerce/creators`
 - `GET /xpex-commerce/creators/:id`
-- `PATCH /xpex-commerce/creators/:id`
+- `PATCH /xpex-commerce/creators/:id/status`
 
-Payload example:
+Create payload:
 
 ```json
 {
-  "name": "Creator demo",
-  "niche": "Música",
-  "audience": "Público jovem",
-  "channels": ["Instagram"],
-  "status": "Aprovado",
-  "notes": "Sem dados sensíveis"
+  "displayName": "Creator demo",
+  "handle": "@creator",
+  "channels": "[\"Instagram\"]",
+  "audienceNotes": "Resumo do público",
+  "styleGuide": "Diretrizes manuais",
+  "score": 8
 }
 ```
 
-Validations: no secrets in notes, channel/status enums, length limits. Permissions: `xpexCommerce.read/create/update`.
-
-## Leads
+## Leads — implemented
 
 - `GET /xpex-commerce/leads`
 - `POST /xpex-commerce/leads`
 - `GET /xpex-commerce/leads/:id`
-- `PATCH /xpex-commerce/leads/:id`
+- `PATCH /xpex-commerce/leads/:id/status`
 
-Payload example:
+Create payload:
 
 ```json
 {
+  "campaignId": "campaign_id_optional",
+  "creatorId": "creator_id_optional",
+  "productId": "product_id_optional",
+  "source": "manual",
+  "externalProfileUrl": "https://example.test/profile",
   "name": "Lead demo",
-  "channel": "Instagram",
-  "interestedProductId": "product_demo",
-  "campaignId": "campaign_demo",
-  "creatorId": "creator_demo",
-  "status": "Novo",
-  "observation": "Observação mínima para follow-up"
+  "contact": "Contato minimizado",
+  "notes": "Observação mínima",
+  "score": 6
 }
 ```
 
-Validations: minimize PII, reject secrets/tokens, require organization-owned relationships. Permissions: `xpexCommerce.read/create/update`.
-
-## Link plans
+## Link plans — implemented
 
 - `GET /xpex-commerce/link-plans`
 - `POST /xpex-commerce/link-plans`
 - `GET /xpex-commerce/link-plans/:id`
-- `PATCH /xpex-commerce/link-plans/:id`
+- `PATCH /xpex-commerce/link-plans/:id/status`
 
-Payload example:
+Create payload:
 
 ```json
 {
-  "campaignId": "campaign_demo",
-  "productId": "product_demo",
-  "creatorId": "creator_demo",
-  "channel": "Instagram",
-  "slug": "demo-instagram",
+  "campaignId": "campaign_id_optional",
+  "productId": "product_id_optional",
+  "creatorId": "creator_id_optional",
+  "plannedSlug": "demo-instagram",
   "destinationUrl": "https://example.test/demo",
-  "status": "Planejado",
+  "source": "manual",
   "notes": "Plano sem redirect real"
 }
 ```
 
-Validations: slug normalized/unique per organization, destination URL sanitized, no redirect execution until reviewed. Permissions: `xpexCommerce.read/create/update`.
+`plannedSlug` is unique per organization. The endpoint stores a plan only; it does not create redirects or integrate with Dub.
 
-## Creative briefs
+## Creative briefs — implemented
 
 - `GET /xpex-commerce/creative-briefs`
 - `POST /xpex-commerce/creative-briefs`
 - `GET /xpex-commerce/creative-briefs/:id`
-- `PATCH /xpex-commerce/creative-briefs/:id`
+- `PATCH /xpex-commerce/creative-briefs/:id/status`
 
-Payload example:
-
-```json
-{
-  "campaignId": "campaign_demo",
-  "productId": "product_demo",
-  "creatorId": "creator_demo",
-  "hook": "Hook demo",
-  "slogan": "Slogan demo",
-  "caption": "Legenda demo",
-  "shortScript": "Roteiro curto",
-  "whatsappText": "Texto manual",
-  "status": "Planejado"
-}
-```
-
-Validations: length limits, no automatic AI generation, no provider token fields. Permissions: `xpexCommerce.read/create/update`.
-
-## Performance reports
-
-- `GET /xpex-commerce/performance-reports`
-- `POST /xpex-commerce/performance-reports`
-- `GET /xpex-commerce/performance-reports/:id`
-
-Payload example:
+Create payload:
 
 ```json
 {
-  "campaignId": "campaign_demo",
-  "periodStart": "2026-07-01T00:00:00.000Z",
-  "periodEnd": "2026-07-07T23:59:59.000Z",
-  "metrics": {
-    "views": 1000,
-    "clicks": 80,
-    "leads": 12,
-    "sales": 2
-  },
-  "notes": "Métricas manuais"
+  "campaignId": "campaign_id_optional",
+  "type": "brief",
+  "title": "Brief demo",
+  "body": "Roteiro manual seguro",
+  "prompt": "Prompt armazenado manualmente; nenhuma IA é chamada"
 }
 ```
 
-Validations: dates ordered, numeric metrics non-negative, manual source identified until integrations exist. Permissions: `xpexCommerce.read/create`.
+## Performance reports — planned
+
+Prisma persistence model exists in Phase 06, but API endpoints remain planned until reporting workflow, metric validation, and import provenance rules are finalized.
+
+## Compliance checks — planned
+
+Prisma persistence model exists in Phase 06, but API endpoints remain planned until the review workflow and approval semantics are finalized.

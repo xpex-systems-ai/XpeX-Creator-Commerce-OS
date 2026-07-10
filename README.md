@@ -78,6 +78,7 @@ Planned XpeX modules include:
 - Campaign planning for creator briefs, slogans, CTAs, and content status.
 - AI creative support for copy, video direction, visual prompts, and compliance review.
 - Reuse of the Postiz calendar as the social publishing layer.
+- Phase 06 adds a controlled real backend persistence foundation for XpeX Commerce records while preserving the localStorage demo mode and avoiding Mercado Livre, Dub, n8n, OpenAI, paid ads, or secrets.
 - Trackable links, lead capture, CRM follow-up, and metrics reporting.
 
 See the detailed architecture in [`docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md`](docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md). Phase 01 is only foundation and audit work; real commercial integrations, Mercado Livre API sync, paid ads automation, and production agents are reserved for later reviewed phases.

@@ -54,3 +54,17 @@ Future endpoints should be auth-protected and organization-scoped. Suggested cap
 - [ ] Import deduplication strategy tested.
 - [ ] Logs reviewed for PII and token safety.
 - [ ] Human approval granted for Prisma migration generation/application.
+
+## Post-Phase 06 checklist
+
+- [x] XpeX Commerce Prisma models added with `organizationId`, timestamps, and tenant-first indexes.
+- [x] Implemented XpeX controller registered in the authenticated controller list so existing `AuthMiddleware` applies.
+- [x] Implemented list/get/create/status-update operations derive organization scope from `@GetOrgFromRequest()`.
+- [x] Implemented payload validation DTOs for strings, statuses, and score range `0..10`.
+- [x] Implemented URL sanitization that rejects `javascript:`, `data:`, and non-HTTP(S) protocols.
+- [x] Implemented payload key rejection for token/secret/API-key/password/credential fields.
+- [x] Kept Mercado Livre API, Dub, n8n, OpenAI, paid ads, provider tokens, and secrets out of Phase 06.
+- [x] Preserved frontend localStorage/demo mode; no frontend API switch was added.
+- [ ] Add production Prisma migration after the deployment migration convention is confirmed; no migrations directory exists in the inspected Prisma tree.
+- [ ] Add explicit permission policies such as `xpexCommerce.read/create/update` if the product decides to gate these routes beyond the existing authenticated organization context.
+- [ ] Add audit logging and rate limits before exposing imports, exports, redirects, external integrations, or automated generation.
