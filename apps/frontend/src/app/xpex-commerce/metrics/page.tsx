@@ -1,0 +1,14 @@
+'use client';
+
+import { ChannelPerformanceTable, CreativeRankingCard, ManualTrackingNotice, MetricCard, OperationModeBadge, SafetyNotice, SectionHeader, XpeXPageShell } from '../components';
+import { buildPerformanceSnapshot } from '../lib/metrics';
+import { useXpeXCommerceStore } from '../lib/use-xpex-commerce-store';
+
+export default function XpeXMetricsPage() {
+  const { state, mode, backendAvailability, operationNotice } = useXpeXCommerceStore();
+  const snapshot = buildPerformanceSnapshot({ campaign: 'Seu quarto vira palco', metrics: state.manualMetrics || [], leads: state.leads, sales: state.manualSales || [], creativeBriefs: state.creativeBriefs });
+  const cards = [
+    ['Visualizações', snapshot.totals.views, `${snapshot.rates.ctr}% CTR manual`], ['Cliques', snapshot.totals.clicks, 'Cliques estimados digitados'], ['Leads', snapshot.totals.leads, `${snapshot.rates.leadRate}% lead rate`], ['Mensagens', snapshot.totals.messages, 'Mensagens recebidas manualmente'], ['Vendas manuais', snapshot.totals.sales, `${snapshot.rates.conversionRate}% conversão`], ['Comissão estimada', `R$ ${snapshot.totals.estimatedCommission.toFixed(2)}`, 'Cálculo local'], ['Melhor canal', snapshot.bestChannel?.channel || '—', 'Por vendas, leads e cliques'], ['Melhor criativo', snapshot.bestCreative?.creative || '—', 'Ranking local por regra simples'],
+  ];
+  return <XpeXPageShell eyebrow="Phase 11 · Métricas" title="Painel de Métricas Manuais" description="Performance do piloto Anderso e da campanha Seu quarto vira palco com dados digitados pelo operador humano, sem integrações externas."><SafetyNotice mode={mode} availability={backendAvailability} notice={operationNotice} /><OperationModeBadge mode={mode} availability={backendAvailability} notice={operationNotice} /><ManualTrackingNotice /><section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{cards.map(([label, value, detail]) => <MetricCard key={label} label={String(label)} value={value} detail={String(detail)} />)}</section><section className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-7"><SectionHeader eyebrow="Canais" title="Tabela por canal" description="Instagram, TikTok, YouTube Shorts e WhatsApp Status medidos manualmente." /><div className="mt-6 overflow-x-auto"><ChannelPerformanceTable channels={snapshot.channels} /></div></section><section className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-7"><SectionHeader eyebrow="Criativos" title="Ranking da campanha Seu quarto vira palco" description="Pontuação local por vendas, leads, mensagens e CTR; sem IA externa." /><div className="mt-6 grid gap-4 lg:grid-cols-2">{snapshot.creatives.map((creative, index) => <CreativeRankingCard key={`${creative.creative}-${creative.channel}`} creative={creative} index={index} />)}</div></section></XpeXPageShell>;
+}

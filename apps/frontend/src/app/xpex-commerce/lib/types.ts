@@ -12,9 +12,17 @@ export type XpeXCommerceStatus =
   | 'Interessado'
   | 'Comprou'
   | 'Follow-up'
-  | 'Não respondeu';
+  | 'Não respondeu'
+  | 'novo'
+  | 'interessado'
+  | 'aguardando resposta'
+  | 'convertido'
+  | 'perdido'
+  | 'publicado manualmente'
+  | 'analisado'
+  | 'criado';
 
-export type XpeXCommerceChannel = 'Instagram' | 'TikTok' | 'WhatsApp' | 'Manual' | 'Outro';
+export type XpeXCommerceChannel = 'Instagram' | 'TikTok' | 'YouTube Shorts' | 'WhatsApp Status' | 'WhatsApp' | 'Manual' | 'Outro';
 
 export type XpeXCommerceCreator = {
   id: string;
@@ -104,6 +112,39 @@ export type XpeXCommerceLead = {
   updatedAt: string;
 };
 
+
+export type XpeXManualMetric = {
+  id: string;
+  campaign: string;
+  channel: XpeXCommerceChannel;
+  creative: string;
+  date: string;
+  views: number;
+  estimatedClicks: number;
+  leads: number;
+  messages: number;
+  manualSales: number;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type XpeXManualSale = {
+  id: string;
+  campaign: string;
+  channel: XpeXCommerceChannel;
+  creative: string;
+  product: string;
+  quantity: number;
+  grossAmount: number;
+  commissionRate: number;
+  estimatedCommission: number;
+  date: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type XpeXCommerceLocalState = {
   version: 1;
   schemaVersion: 'xpex-commerce-local-v1';
@@ -114,6 +155,8 @@ export type XpeXCommerceLocalState = {
   creativeBriefs: XpeXCommerceCreativeBrief[];
   linkPlans: XpeXCommerceLinkPlan[];
   leads: XpeXCommerceLead[];
+  manualMetrics: XpeXManualMetric[];
+  manualSales: XpeXManualSale[];
   lastUpdatedAt: string;
 };
 
