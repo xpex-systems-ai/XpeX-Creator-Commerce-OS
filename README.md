@@ -88,6 +88,8 @@ Phase 03 expands that isolated surface into a manual operational MVP with static
 
 Phase 04 adds controlled local operations to `/xpex-commerce` using browser `localStorage` only. Products, campaigns, planned links, creative briefs, and the new `/xpex-commerce/leads` CRM route can be managed locally without adding a database, Prisma migration, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automation, paid ads, or secrets.
 
+Phase 05 adds a safe backend contract package for XpeX Commerce: API contract, Prisma schema draft, security plan, and localStorage-to-backend migration plan. It does not apply migrations, register live commerce endpoints, or add external integrations; the local MVP remains browser-only until a later reviewed persistence phase.
+
 Build/deploy note: this fork avoids mandatory external build-time dependencies where possible, including remote font resolution, so XpeX can be deployed more reliably in restricted environments while preserving the Postiz foundation.
 
 ## 🔌 See the leading Postiz features

@@ -1,6 +1,8 @@
-import type { XpeXCommerceLocalState } from './types';
+import type { XpeXCommerceLocalState, XpeXCommerceLocalStateExport } from './types';
 
 const STORAGE_KEY = 'xpex-commerce-local-operations-v1';
+const SCHEMA_VERSION = 'xpex-commerce-local-v1' as const;
+const EXPORT_SOURCE = 'xpex-commerce-local-mvp' as const;
 let memoryState: XpeXCommerceLocalState | null = null;
 const now = () => new Date().toISOString();
 
@@ -8,6 +10,8 @@ export function seedXpeXLocalState(): XpeXCommerceLocalState {
   const timestamp = now();
   return {
     version: 1,
+    schemaVersion: SCHEMA_VERSION,
+    source: EXPORT_SOURCE,
     lastUpdatedAt: timestamp,
     creators: [{ id: 'creator-anderso', name: 'Anderso', niche: 'Cantor de trap com público jovem', audience: 'Jovens conectados a música, lifestyle, quarto gamer e cultura urbana', channels: ['Instagram', 'TikTok', 'WhatsApp'], status: 'Aprovado', notes: 'Criador piloto para validar operação local controlada.', createdAt: timestamp, updatedAt: timestamp }],
     products: [{ id: 'product-projetor-portatil', name: 'Projetor portátil', category: 'Tecnologia / lifestyle', mercadoLivreUrl: '', audienceFit: 'Quarto gamer, música, cinema em casa e jovens que querem transformar o ambiente.', creator: 'Anderso', creatorFit: 'Muito alto para Anderso: combina show, clipe, quarto e lifestyle urbano.', campaignAngle: 'Seu quarto vira palco', ctaKeyword: 'TELÃO', score: 9.2, status: 'Em campanha', notes: 'Produto âncora da Fase 04; usar demonstração manual, sem integração Mercado Livre.', createdAt: timestamp, updatedAt: timestamp }],
@@ -27,14 +31,18 @@ export function getXpeXLocalState(): XpeXCommerceLocalState {
     if (!raw) return saveXpeXLocalState(seedXpeXLocalState());
     const parsed = JSON.parse(raw) as XpeXCommerceLocalState;
     if (parsed?.version !== 1) return saveXpeXLocalState(seedXpeXLocalState());
-    return parsed;
+    return normalizeXpeXLocalState(parsed);
   } catch {
     return saveXpeXLocalState(seedXpeXLocalState());
   }
 }
 
+function normalizeXpeXLocalState(state: XpeXCommerceLocalState): XpeXCommerceLocalState {
+  return { ...state, version: 1, schemaVersion: SCHEMA_VERSION, source: EXPORT_SOURCE };
+}
+
 export function saveXpeXLocalState(state: XpeXCommerceLocalState): XpeXCommerceLocalState {
-  const next = { ...state, lastUpdatedAt: now() };
+  const next = { ...normalizeXpeXLocalState(state), lastUpdatedAt: now() };
   memoryState = next;
   if (isBrowser()) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   return next;
@@ -48,5 +56,12 @@ export function resetXpeXLocalState(): XpeXCommerceLocalState {
 }
 
 export function exportXpeXLocalStateJson(): string {
-  return JSON.stringify(getXpeXLocalState(), null, 2);
+  const exportedState: XpeXCommerceLocalStateExport = {
+    schemaVersion: SCHEMA_VERSION,
+    exportedAt: now(),
+    source: EXPORT_SOURCE,
+    data: getXpeXLocalState(),
+  };
+
+  return JSON.stringify(exportedState, null, 2);
 }

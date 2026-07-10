@@ -106,6 +106,8 @@ export type XpeXCommerceLead = {
 
 export type XpeXCommerceLocalState = {
   version: 1;
+  schemaVersion: 'xpex-commerce-local-v1';
+  source: 'xpex-commerce-local-mvp';
   products: XpeXCommerceProduct[];
   campaigns: XpeXCommerceCampaign[];
   creators: XpeXCommerceCreator[];
@@ -113,4 +115,11 @@ export type XpeXCommerceLocalState = {
   linkPlans: XpeXCommerceLinkPlan[];
   leads: XpeXCommerceLead[];
   lastUpdatedAt: string;
+};
+
+export type XpeXCommerceLocalStateExport = {
+  schemaVersion: 'xpex-commerce-local-v1';
+  exportedAt: string;
+  source: 'xpex-commerce-local-mvp';
+  data: XpeXCommerceLocalState;
 };
