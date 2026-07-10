@@ -8,10 +8,13 @@ Phase 02 should add isolated XpeX surfaces without changing authentication, OAut
 - Acceptance: Phase 02 work starts only after frontend build validation is documented.
 
 ## 0.1 Internal XpeX landing and commercial dashboard foundation
+- Status: first Phase 02 deliverable implemented as `/xpex-commerce`.
 - Probable files: isolated frontend routes/components under `apps/frontend`.
 - Risk: heavy rebrand work could unintentionally affect existing Postiz flows.
 - Dependencies: Phase 01.1 build stabilization and approved XpeX brand tokens.
 - Acceptance: a clearly scoped XpeX internal landing/dashboard surface exists after stabilization without replacing core Postiz navigation or behavior.
+- Acceptance criteria for the first dashboard MVP: route accessible, build passing, typed mock data only, no Prisma migration, no real API integration, and no secrets.
+- Next item: Phase 03 Produto Manual + Campanha Manual.
 
 ## 1. XpeX menu in frontend
 - Probable files: `apps/frontend` navigation/layout components.
