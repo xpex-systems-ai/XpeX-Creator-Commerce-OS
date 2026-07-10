@@ -43,6 +43,14 @@ model Organization {
   webhooks            Webhooks[]
   oauthApp            OAuthApp[]
   oauthAuthorizations OAuthAuthorization[]
+  xpexCommerceProducts XpeXCommerceProduct[]
+  xpexCommerceCreators XpeXCommerceCreator[]
+  xpexCommerceCampaigns XpeXCommerceCampaign[]
+  xpexCommerceLeads XpeXCommerceLead[]
+  xpexCommerceLinkPlans XpeXCommerceLinkPlan[]
+  xpexCommerceCreativeBriefs XpeXCommerceCreativeBrief[]
+  xpexCommercePerformanceReports XpeXCommercePerformanceReport[]
+  xpexCommerceComplianceChecks XpeXCommerceComplianceCheck[]
 
   @@index([apiKey])
   @@index([streakSince])
@@ -113,6 +121,10 @@ model User {
   sendFailureEmails     Boolean              @default(true)
   sendStreakEmails      Boolean              @default(true)
   oauthAuthorizations   OAuthAuthorization[]
+  xpexCommerceCreators XpeXCommerceCreator[]
+  xpexCommerceOwnedCampaigns XpeXCommerceCampaign[]
+  xpexCommerceCreatedBriefs XpeXCommerceCreativeBrief[]
+  xpexCommerceReviewedChecks XpeXCommerceComplianceCheck[]
 
   @@unique([email, providerName])
   @@index([lastReadNotifications])
@@ -224,6 +236,7 @@ model Media {
   agencies           SocialMediaAgency[]
   userPicture        User[]
   oauthApps          OAuthApp[]
+  xpexCommerceCreativeBriefs XpeXCommerceCreativeBrief[]
 
   @@index([name])
   @@index([organizationId])
@@ -427,6 +440,8 @@ model Post {
   submittedForOrder          Orders?                   @relation(fields: [submittedForOrderId], references: [id])
   submittedForOrganization   Organization?             @relation("submittedForOrg", fields: [submittedForOrganizationId], references: [id])
   tags                       TagsPosts[]
+  xpexCommerceLinkPlans       XpeXCommerceLinkPlan[]
+  xpexCommerceComplianceChecks XpeXCommerceComplianceCheck[]
 
   @@index([group])
   @@index([deletedAt])
@@ -967,4 +982,250 @@ model Announcement {
   description String
   color       AnnouncementColor @default(INFO)
   createdAt   DateTime          @default(now())
+}
+
+enum XpeXCommerceRecordStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum XpeXCommerceLeadStatus {
+  NEW
+  QUALIFIED
+  CONTACTED
+  CONVERTED
+  ARCHIVED
+}
+
+enum XpeXCommerceComplianceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  NEEDS_REVIEW
+}
+
+enum XpeXCommerceRiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model XpeXCommerceProduct {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  title             String
+  source            String                                @default("manual")
+  sourceUrl         String?
+  imageUrl          String?
+  priceSnapshot     Decimal?                              @db.Decimal(12, 2)
+  currency          String                                @default("BRL")
+  score             Int                                   @default(0)
+  notes             String?
+  status            XpeXCommerceRecordStatus              @default(DRAFT)
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  campaigns         XpeXCommerceCampaign[]
+  leads             XpeXCommerceLead[]
+  linkPlans         XpeXCommerceLinkPlan[]
+  performanceReports XpeXCommercePerformanceReport[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+}
+
+model XpeXCommerceCreator {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  userId            String?
+  displayName       String
+  handle            String?
+  channels          String                                @default("[]")
+  audienceNotes     String?
+  styleGuide        String?
+  score             Int                                   @default(0)
+  status            XpeXCommerceRecordStatus              @default(DRAFT)
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  user              User?                                 @relation(fields: [userId], references: [id])
+  campaigns         XpeXCommerceCampaign[]
+  leads             XpeXCommerceLead[]
+  linkPlans         XpeXCommerceLinkPlan[]
+  performanceReports XpeXCommercePerformanceReport[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, userId])
+}
+
+model XpeXCommerceCampaign {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  productId         String?
+  creatorId         String?
+  ownerUserId       String?
+  name              String
+  slogan            String?
+  cta               String?
+  channels          String                                @default("[]")
+  score             Int                                   @default(0)
+  status            XpeXCommerceRecordStatus              @default(DRAFT)
+  startsAt          DateTime?
+  endsAt            DateTime?
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  product           XpeXCommerceProduct?                  @relation(fields: [productId], references: [id])
+  creator           XpeXCommerceCreator?                  @relation(fields: [creatorId], references: [id])
+  ownerUser         User?                                 @relation(fields: [ownerUserId], references: [id])
+  leads             XpeXCommerceLead[]
+  linkPlans         XpeXCommerceLinkPlan[]
+  creativeBriefs    XpeXCommerceCreativeBrief[]
+  performanceReports XpeXCommercePerformanceReport[]
+  complianceChecks  XpeXCommerceComplianceCheck[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, productId])
+  @@index([organizationId, creatorId])
+}
+
+model XpeXCommerceLead {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  campaignId        String?
+  creatorId         String?
+  productId         String?
+  source            String                                @default("manual")
+  externalProfileUrl String?
+  name              String?
+  contact           String?
+  notes             String?
+  consentSnapshot   String?
+  score             Int                                   @default(0)
+  status            XpeXCommerceLeadStatus                @default(NEW)
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  campaign          XpeXCommerceCampaign?                 @relation(fields: [campaignId], references: [id])
+  creator           XpeXCommerceCreator?                  @relation(fields: [creatorId], references: [id])
+  product           XpeXCommerceProduct?                  @relation(fields: [productId], references: [id])
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, campaignId])
+  @@index([organizationId, creatorId])
+  @@index([organizationId, productId])
+}
+
+model XpeXCommerceLinkPlan {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  campaignId        String?
+  productId         String?
+  creatorId         String?
+  postId            String?
+  provider          String                                @default("manual")
+  plannedSlug       String
+  destinationUrl    String
+  source            String                                @default("manual")
+  notes             String?
+  status            XpeXCommerceRecordStatus              @default(DRAFT)
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  campaign          XpeXCommerceCampaign?                 @relation(fields: [campaignId], references: [id])
+  product           XpeXCommerceProduct?                  @relation(fields: [productId], references: [id])
+  creator           XpeXCommerceCreator?                  @relation(fields: [creatorId], references: [id])
+  post              Post?                                 @relation(fields: [postId], references: [id])
+
+  @@unique([organizationId, plannedSlug])
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, campaignId])
+  @@index([organizationId, productId])
+  @@index([organizationId, creatorId])
+}
+
+model XpeXCommerceCreativeBrief {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  campaignId        String?
+  mediaId           String?
+  createdByUserId   String?
+  type              String                                @default("brief")
+  title             String
+  body              String
+  prompt            String?
+  status            XpeXCommerceRecordStatus              @default(DRAFT)
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  campaign          XpeXCommerceCampaign?                 @relation(fields: [campaignId], references: [id])
+  media             Media?                                @relation(fields: [mediaId], references: [id])
+  createdByUser     User?                                 @relation(fields: [createdByUserId], references: [id])
+  complianceChecks  XpeXCommerceComplianceCheck[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, campaignId])
+}
+
+model XpeXCommercePerformanceReport {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  campaignId        String?
+  productId         String?
+  creatorId         String?
+  periodStart       DateTime
+  periodEnd         DateTime
+  metricsJson       String                                @default("{}")
+  insightsJson      String                                @default("{}")
+  source            String                                @default("manual")
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  campaign          XpeXCommerceCampaign?                 @relation(fields: [campaignId], references: [id])
+  product           XpeXCommerceProduct?                  @relation(fields: [productId], references: [id])
+  creator           XpeXCommerceCreator?                  @relation(fields: [creatorId], references: [id])
+
+  @@index([organizationId])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, campaignId])
+  @@index([organizationId, productId])
+  @@index([organizationId, creatorId])
+}
+
+model XpeXCommerceComplianceCheck {
+  id                String                                @id @default(uuid())
+  organizationId    String
+  campaignId        String?
+  creativeBriefId   String?
+  postId            String?
+  reviewerUserId    String?
+  status            XpeXCommerceComplianceStatus          @default(PENDING)
+  riskLevel         XpeXCommerceRiskLevel                 @default(LOW)
+  findingsJson      String                                @default("{}")
+  approvedAt        DateTime?
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  organization      Organization                          @relation(fields: [organizationId], references: [id])
+  campaign          XpeXCommerceCampaign?                 @relation(fields: [campaignId], references: [id])
+  creativeBrief     XpeXCommerceCreativeBrief?            @relation(fields: [creativeBriefId], references: [id])
+  post              Post?                                 @relation(fields: [postId], references: [id])
+  reviewerUser      User?                                 @relation(fields: [reviewerUserId], references: [id])
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, campaignId])
 }

@@ -43,6 +43,8 @@ import { GoogleProvider } from '@gitroom/backend/services/auth/providers/google.
 import { FarcasterProvider } from '@gitroom/backend/services/auth/providers/farcaster.provider';
 import { WalletProvider } from '@gitroom/backend/services/auth/providers/wallet.provider';
 import { OauthProvider } from '@gitroom/backend/services/auth/providers/oauth.provider';
+import { XpeXCommerceController } from '@gitroom/backend/api/routes/xpex-commerce/xpex-commerce.controller';
+import { XpeXCommerceService } from '@gitroom/backend/api/routes/xpex-commerce/xpex-commerce.service';
 
 const authenticatedController = [
   UsersController,
@@ -64,6 +66,7 @@ const authenticatedController = [
   OAuthAuthorizedController,
   AnnouncementsController,
   AdminController,
+  XpeXCommerceController,
 ];
 @Module({
   imports: [UploadModule],
@@ -96,6 +99,7 @@ const authenticatedController = [
     FarcasterProvider,
     WalletProvider,
     OauthProvider,
+    XpeXCommerceService,
   ],
   get exports() {
     return [...this.imports, ...this.providers];
