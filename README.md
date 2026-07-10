@@ -67,7 +67,11 @@
 
 <br /><br />
 
-## XpeX Creator Commerce OS foundation
+## XpeX Creator Commerce OS
+
+### Phase 10 — Real Internal Operation
+
+A Phase 10 adiciona a primeira operação real controlada do XpeX Creator Commerce OS: produto piloto de projetor portátil, criador piloto Anderso e campanha piloto “Seu quarto vira palco”. O fluxo permanece manual e revisado por humano, sem Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automatizado, anúncios pagos ou publicação automática.
 
 This repository is a fork that will evolve, in safe layers, into **XpeX Creator Commerce OS**: a creator-commerce operating system for Mercado Livre products, AI-assisted campaign planning, trackable links, creators, social publishing, CRM, metrics, and optimization. The current foundation remains the upstream Postiz open source application, and this fork preserves the original Postiz attribution and AGPL-3.0 license posture.
 
