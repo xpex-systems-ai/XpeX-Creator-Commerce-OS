@@ -13,7 +13,7 @@ export function XpeXPageShell({ eyebrow, title, description, children }: { eyebr
 export function SafetyNotice({ mode = 'local', availability = 'disabled', notice }: { mode?: XpeXStorageMode; availability?: XpeXBackendAvailability; notice?: string }) {
   const label = getXpeXStorageModeLabel(mode);
   const description = notice || getXpeXStorageModeDescription(mode, availability);
-  return <aside className="rounded-[2rem] border border-[#22C55E]/25 bg-[#22C55E]/10 p-5 text-sm leading-6 text-white/72"><strong className="text-[#B8FFD0]">{label} · Homologação segura:</strong> {description} Mercado Livre, Dub, n8n, OpenAI, WhatsApp e anúncios pagos seguem desconectados.</aside>;
+  return <aside className="rounded-[2rem] border border-[#22C55E]/25 bg-[#22C55E]/10 p-5 text-sm leading-6 text-white/72"><strong className="text-[#B8FFD0]">{label} · Fase 09 · Importação e CRUD seguro:</strong> {description} Mercado Livre, Dub, n8n, OpenAI, WhatsApp e anúncios pagos seguem desconectados.</aside>;
 }
 
 export function OperationModeBadge({ mode, availability, notice }: { mode: XpeXStorageMode; availability: XpeXBackendAvailability; notice: string }) {
@@ -27,3 +27,17 @@ export function ModuleCard({ href, title, detail, cta }: { href: string; title: 
 export function ProductCard({ product }: { product: { name: string; category: string; score: number; status: string; creatorFit: string; campaignAngle: string; ctaKeyword: string; notes: string } }) { return <article className="rounded-[2rem] border border-white/10 bg-[#081322]/85 p-6"><div className="flex items-start justify-between gap-4"><div><h3 className="text-2xl font-black">{product.name}</h3><p className="mt-1 text-sm text-white/55">{product.category}</p></div><StatusBadge>{product.status}</StatusBadge></div><p className="mt-4 text-4xl font-black text-[#F5B301]">{product.score}/10</p><p className="mt-4 text-sm leading-6 text-white/65">{product.creatorFit}</p><p className="mt-4 rounded-2xl bg-black/25 p-4 text-sm text-white/70">Ângulo: {product.campaignAngle} · CTA: {product.ctaKeyword}</p><p className="mt-4 text-sm leading-6 text-white/55">{product.notes}</p></article>; }
 export function CampaignCard({ campaign }: { campaign: { name: string; product: string; creator: string; cta: string; score: number; status: string; briefing: string; channels: readonly string[] } }) { return <article className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-6"><div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-2xl font-black">{campaign.name}</h3><StatusBadge>{campaign.status}</StatusBadge></div><p className="mt-3 text-white/65">{campaign.product} · {campaign.creator} · Score {campaign.score}/10</p><p className="mt-4 rounded-2xl bg-black/25 p-4 font-bold text-white">CTA: {campaign.cta}</p><p className="mt-4 text-sm leading-6 text-white/62">{campaign.briefing}</p><div className="mt-5 flex flex-wrap gap-2">{campaign.channels.map((channel) => <StatusBadge key={channel}>{channel}</StatusBadge>)}</div></article>; }
 export function LinkPlanCard({ link }: { link: { channel: string; slug: string; campaign: string; status: string } }) { return <article className="rounded-3xl border border-white/10 bg-[#081322]/85 p-5"><StatusBadge>{link.channel}</StatusBadge><h3 className="mt-4 text-xl font-black">{link.slug}</h3><p className="mt-2 text-sm text-white/60">{link.campaign}</p><p className="mt-4 text-sm text-[#B8FFD0]">{link.status}</p></article>; }
+
+
+export function ImportStatusBadge({ status }: { status: 'ready' | 'warning' | 'blocked' | string }) {
+  const color = status === 'ready' ? 'border-[#22C55E]/40 bg-[#22C55E]/15 text-[#B8FFD0]' : status === 'blocked' ? 'border-red-300/40 bg-red-500/15 text-red-100' : 'border-amber-300/40 bg-amber-300/15 text-amber-100';
+  return <span className={`rounded-full border px-3 py-1 text-xs font-black uppercase tracking-[0.18em] ${color}`}>{status}</span>;
+}
+
+export function CrudReadinessBadge({ ready, label }: { ready: boolean; label: string }) {
+  return <div className={`rounded-2xl border p-4 text-sm font-bold ${ready ? 'border-[#22C55E]/25 bg-[#22C55E]/10 text-[#B8FFD0]' : 'border-amber-300/25 bg-amber-300/10 text-amber-100'}`}>{ready ? '✓' : '•'} {label}</div>;
+}
+
+export function ImportPlanCard({ title, value, detail }: { title: string; value: string | number; detail: string }) {
+  return <article className="rounded-3xl border border-white/10 bg-black/20 p-5"><p className="text-sm text-white/55">{title}</p><strong className="mt-2 block text-3xl font-black text-white">{value}</strong><p className="mt-2 text-sm leading-6 text-white/60">{detail}</p></article>;
+}

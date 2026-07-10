@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { xpexCommerceBackendClient } from './backend-client';
+import { buildImportPlan, type ImportPlan } from './import-planner';
 import { exportXpeXLocalStateJson, getXpeXLocalState, resetXpeXLocalState, saveXpeXLocalState } from './local-store';
 import { getXpeXCommerceStorageMode, getXpeXStorageModeDescription, type XpeXBackendAvailability } from './storage-mode';
 import type { XpeXCommerceCampaign, XpeXCommerceCreativeBrief, XpeXCommerceLead, XpeXCommerceLinkPlan, XpeXCommerceLocalState, XpeXCommerceProduct, XpeXCommerceStatus } from './types';
@@ -21,6 +22,11 @@ export function useXpeXCommerceStore() {
   const [notice, setNotice] = useState('');
   const [backendCheckedAt, setBackendCheckedAt] = useState<string | null>(null);
   const [fallbackReason, setFallbackReason] = useState<string | null>(null);
+  const [importPlan, setImportPlan] = useState<ImportPlan | null>(null);
+  const [importStatus, setImportStatus] = useState<'idle' | 'previewed' | 'importing' | 'completed' | 'blocked' | 'failed'>('idle');
+  const [importErrors, setImportErrors] = useState<string[]>([]);
+  const [importWarnings, setImportWarnings] = useState<string[]>([]);
+  const [lastImportAt, setLastImportAt] = useState<string | null>(null);
   const mode = getXpeXCommerceStorageMode();
 
   useEffect(() => {
@@ -78,6 +84,55 @@ export function useXpeXCommerceStore() {
     backendCheckedAt,
     fallbackReason,
     operationNotice: notice || getXpeXStorageModeDescription(mode, availability),
+    importPlan,
+    importStatus,
+    importErrors,
+    importWarnings,
+    lastImportAt,
+    previewBackendImport() {
+      const plan = buildImportPlan(getXpeXLocalState());
+      setImportPlan(plan);
+      setImportStatus(plan.status === 'blocked' ? 'blocked' : 'previewed');
+      setImportErrors(plan.issues.filter((entry) => entry.level === 'blocked').map((entry) => entry.message));
+      setImportWarnings([...plan.issues.filter((entry) => entry.level === 'warning').map((entry) => entry.message), ...plan.duplicates.map((entry) => entry.message)]);
+      return plan;
+    },
+    async runBackendImport() {
+      const plan = buildImportPlan(getXpeXLocalState());
+      setImportPlan(plan);
+      if (mode !== 'backend' || availability !== 'available' || !plan.canImport) {
+        const reason = mode !== 'backend' ? 'Importação bloqueada: backend opt-in não habilitado.' : availability !== 'available' ? 'Importação bloqueada: diagnostics do backend não está saudável.' : 'Importação bloqueada: plano não está ready.';
+        setImportStatus('blocked');
+        setImportErrors([reason, ...plan.issues.filter((entry) => entry.level === 'blocked').map((entry) => entry.message)]);
+        return { ok: false as const, error: reason };
+      }
+      setImportStatus('importing');
+      const local = getXpeXLocalState();
+      const calls = [
+        ...local.products.map((item) => xpexCommerceBackendClient.importProduct(item)),
+        ...local.creators.map((item) => xpexCommerceBackendClient.importCreator(item)),
+        ...local.campaigns.map((item) => xpexCommerceBackendClient.importCampaign(item)),
+        ...local.leads.map((item) => xpexCommerceBackendClient.importLead(item)),
+        ...local.linkPlans.map((item) => xpexCommerceBackendClient.importLinkPlan(item)),
+        ...local.creativeBriefs.map((item) => xpexCommerceBackendClient.importCreativeBrief(item)),
+      ];
+      const results = await Promise.all(calls);
+      const failed = results.filter((result) => !result.ok) as { ok: false; error: string }[];
+      if (failed.length) {
+        const errors = failed.map((entry) => entry.error);
+        setImportStatus('failed');
+        setImportErrors(errors);
+        fallbackNotice(errors[0] || 'Falha durante importação backend');
+        return { ok: false as const, error: errors[0] || 'Falha durante importação backend' };
+      }
+      const time = stamp();
+      setImportStatus('completed');
+      setLastImportAt(time);
+      setImportErrors([]);
+      setNotice('Importação manual concluída. localStorage foi preservado e não foi apagado.');
+      return { ok: true as const, imported: results.length };
+    },
+    clearImportResult() { setImportPlan(null); setImportStatus('idle'); setImportErrors([]); setImportWarnings([]); },
     async addProduct(input: NewProduct) {
       if (mode === 'backend') { const result = await xpexCommerceBackendClient.createProduct(input); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }
       const time = stamp();

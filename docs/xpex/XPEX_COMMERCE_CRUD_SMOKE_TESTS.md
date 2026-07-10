@@ -87,3 +87,18 @@ Blocker: OpenAI or any AI/media provider call occurs.
 - Fallback localStorage remains operational when backend calls fail.
 - No destructive database command is required.
 - No external integration is triggered.
+
+## Phase 09 controlled CRUD page
+
+Use `/xpex-commerce/crud-tests` as the operator checklist before touching real backend data. The page must show backend mode, diagnostics health, auth/session assumptions, organization scope, and coverage for products, campaigns, creators, leads, link plans, and creative briefs.
+
+Success criteria:
+
+- Backend opt-in is enabled and diagnostics are healthy.
+- Test records are clearly marked `TEST_DEMO_XPEX`.
+- Create, list, and update status are validated for each resource.
+- No physical delete is executed in this phase.
+
+Blocking criteria:
+
+- Backend mode disabled, diagnostics unavailable, fallback active, missing authenticated user, uncertain organization scope, real personal data, or any external integration attempt.

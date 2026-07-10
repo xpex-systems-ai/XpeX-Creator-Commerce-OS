@@ -48,3 +48,7 @@ For local disposable validation only, use the project's approved local migration
 - Authenticated diagnostics returns safe status only.
 - CRUD smoke tests pass with dummy internal data.
 - No secrets or provider tokens are introduced.
+
+## Phase 09 post-homologation readiness
+
+Before using the real backend for import or CRUD validation, confirm backup availability, correct environment, reviewed migrations, rollback plan, safe `DATABASE_URL`, active organization scope, and authenticated user session. These checks are manual readiness gates; this document intentionally does not add destructive commands or automatic database execution.
