@@ -2,6 +2,11 @@
 
 Phase 06 implements the first authenticated, organization-scoped backend endpoints for manual XpeX Commerce persistence. The API still avoids Mercado Livre, Dub, n8n, OpenAI, paid ads, OAuth/provider changes, redirects, and provider secrets.
 
+
+## Phase 07 frontend connection state
+
+The frontend now has an opt-in backend mode guarded by `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`. Without that public flag, `/xpex-commerce` stays in localStorage demo mode. When the flag is enabled, the frontend uses relative authenticated requests to the routes in this contract and falls back to localStorage on network/API errors. No browser token storage, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp automation, paid ads automation, OAuth change, or Postiz social publishing change is introduced by this connection layer.
+
 ## Common rules
 
 - `organizationId` is never accepted from payloads; it is derived from authenticated request context.
