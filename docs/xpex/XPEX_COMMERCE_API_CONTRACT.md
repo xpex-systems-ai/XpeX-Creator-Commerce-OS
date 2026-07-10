@@ -173,3 +173,12 @@ Response contains only safe technical readiness fields:
 ```
 
 The Nest route is mounted inside the existing authenticated XpeX Commerce controller and derives organization scope from the request context. It must not return user records, lead payloads, provider tokens, private URLs, infrastructure details, secrets, or API keys. The frontend calls it only through the relative `/api/xpex-commerce/diagnostics` proxy path when `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`; failures keep the localStorage fallback active.
+
+## Phase 09 import and controlled CRUD
+
+The Phase 09 frontend import flow uses existing individual create/list/update status endpoints through `/api/xpex-commerce`. Bulk import endpoint status: **blocked for Phase 09**. `POST /xpex-commerce/import/local-state` is not implemented because individual authenticated organization-scoped calls are safer for manual validation and partial-failure handling.
+
+Routes added to the frontend:
+
+- `/xpex-commerce/import` for localStorage dry-run, validation, and manual backend import.
+- `/xpex-commerce/crud-tests` for controlled non-destructive CRUD readiness checks.
