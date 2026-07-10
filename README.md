@@ -178,3 +178,8 @@ This repository's source code is available under the [AGPL-3.0 license](LICENSE)
 <p align="center">
   <img src="https://github.com/snyk-labs/secure-developer-sample-repo/raw/main/badge_full.svg" alt="Secure Developer Badge Full" width="150">
 </p>
+
+
+## XpeX Creator Commerce OS — Phase 11
+
+A Fase 11 adiciona métricas manuais, rastreamento operacional, leads revisados por humano, painel de performance do piloto e calendário de 7 dias para a campanha **Seu quarto vira palco** com Anderso. A camada permanece segura: sem APIs externas, sem Mercado Livre API, sem Dub, sem n8n, sem OpenAI, sem WhatsApp API, sem anúncios pagos automatizados e sem publicação automática, preservando a documentação original do Postiz e a licença AGPL.

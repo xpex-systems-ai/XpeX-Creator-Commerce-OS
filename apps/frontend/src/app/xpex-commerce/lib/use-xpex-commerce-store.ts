@@ -5,6 +5,8 @@ import { xpexCommerceBackendClient } from './backend-client';
 import { buildImportPlan, type ImportPlan } from './import-planner';
 import { exportXpeXLocalStateJson, getXpeXLocalState, resetXpeXLocalState, saveXpeXLocalState } from './local-store';
 import { getXpeXCommerceStorageMode, getXpeXStorageModeDescription, type XpeXBackendAvailability } from './storage-mode';
+import { buildPerformanceSnapshot as buildSnapshot, calculateEstimatedCommission } from './metrics';
+import type { CampaignMetric, LeadMetric, ManualSaleMetric } from './metrics';
 import type { XpeXCommerceCampaign, XpeXCommerceCreativeBrief, XpeXCommerceLead, XpeXCommerceLinkPlan, XpeXCommerceLocalState, XpeXCommerceProduct, XpeXCommerceStatus } from './types';
 
 const id = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -15,6 +17,8 @@ type NewCampaign = Omit<XpeXCommerceCampaign, 'id' | 'createdAt' | 'updatedAt'>;
 type NewLead = Omit<XpeXCommerceLead, 'id' | 'createdAt' | 'updatedAt'>;
 type NewLinkPlan = Omit<XpeXCommerceLinkPlan, 'id' | 'createdAt' | 'updatedAt'>;
 type NewCreativeBrief = Omit<XpeXCommerceCreativeBrief, 'id' | 'createdAt' | 'updatedAt'>;
+type NewManualMetric = Omit<CampaignMetric, 'id' | 'createdAt' | 'updatedAt'>;
+type NewManualSale = Omit<ManualSaleMetric, 'id' | 'createdAt' | 'updatedAt' | 'estimatedCommission'>;
 
 export function useXpeXCommerceStore() {
   const [state, setState] = useState<XpeXCommerceLocalState>(() => getXpeXLocalState());
@@ -147,6 +151,32 @@ export function useXpeXCommerceStore() {
       if (mode === 'backend') { const result = await xpexCommerceBackendClient.createLead(input); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }
       const time = stamp();
       persist((current) => ({ ...current, leads: [{ ...input, id: id('lead'), createdAt: time, updatedAt: time }, ...current.leads] }));
+    },
+    async addManualMetric(input: NewManualMetric) {
+      const time = stamp();
+      persist((current) => ({ ...current, manualMetrics: [{ ...input, id: id('metric'), createdAt: time, updatedAt: time }, ...(current.manualMetrics || [])] }));
+      setNotice('Métrica manual salva localmente. Revisão humana continua obrigatória.');
+    },
+    updateManualMetric(metricId: string, input: Partial<NewManualMetric>) {
+      const time = stamp();
+      persist((current) => ({ ...current, manualMetrics: (current.manualMetrics || []).map((metric) => metric.id === metricId ? { ...metric, ...input, updatedAt: time } : metric) }));
+    },
+    async addManualLead(input: NewLead) {
+      if (mode === 'backend') { const result = await xpexCommerceBackendClient.createLead(input); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }
+      const time = stamp();
+      persist((current) => ({ ...current, leads: [{ ...input, id: id('lead'), createdAt: time, updatedAt: time }, ...current.leads] }));
+    },
+    updateManualLeadStatus(leadId: string, status: XpeXCommerceStatus) {
+      const time = stamp();
+      persist((current) => ({ ...current, leads: current.leads.map((lead) => lead.id === leadId ? { ...lead, status, updatedAt: time } : lead) }));
+    },
+    async addManualSale(input: NewManualSale) {
+      const time = stamp();
+      persist((current) => ({ ...current, manualSales: [{ ...input, id: id('sale'), estimatedCommission: calculateEstimatedCommission(input.grossAmount, input.commissionRate), createdAt: time, updatedAt: time }, ...(current.manualSales || [])] }));
+      setNotice('Venda manual registrada localmente sem integração externa.');
+    },
+    buildPerformanceSnapshot(campaign = 'Seu quarto vira palco') {
+      return buildSnapshot({ campaign, metrics: (getXpeXLocalState().manualMetrics || []) as CampaignMetric[], leads: getXpeXLocalState().leads as LeadMetric[], sales: (getXpeXLocalState().manualSales || []) as ManualSaleMetric[], creativeBriefs: getXpeXLocalState().creativeBriefs });
     },
     async addLinkPlan(input: NewLinkPlan) {
       if (mode === 'backend') { const result = await xpexCommerceBackendClient.createLinkPlan(input); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }
