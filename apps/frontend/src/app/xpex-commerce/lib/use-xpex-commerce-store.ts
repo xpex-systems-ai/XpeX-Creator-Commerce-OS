@@ -19,6 +19,8 @@ export function useXpeXCommerceStore() {
   const [state, setState] = useState<XpeXCommerceLocalState>(() => getXpeXLocalState());
   const [availability, setAvailability] = useState<XpeXBackendAvailability>(() => getXpeXCommerceStorageMode() === 'backend' ? 'checking' : 'disabled');
   const [notice, setNotice] = useState('');
+  const [backendCheckedAt, setBackendCheckedAt] = useState<string | null>(null);
+  const [fallbackReason, setFallbackReason] = useState<string | null>(null);
   const mode = getXpeXCommerceStorageMode();
 
   useEffect(() => {
@@ -28,7 +30,8 @@ export function useXpeXCommerceStore() {
 
     let cancelled = false;
     async function loadBackend() {
-      const [products, campaigns, leads, linkPlans, creativeBriefs] = await Promise.all([
+      const [diagnostics, products, campaigns, leads, linkPlans, creativeBriefs] = await Promise.all([
+        xpexCommerceBackendClient.checkDiagnostics(),
         xpexCommerceBackendClient.listProducts(),
         xpexCommerceBackendClient.listCampaigns(),
         xpexCommerceBackendClient.listLeads(),
@@ -36,17 +39,20 @@ export function useXpeXCommerceStore() {
         xpexCommerceBackendClient.listCreativeBriefs(),
       ]);
       if (cancelled) return;
-      const results = [products, campaigns, leads, linkPlans, creativeBriefs];
+      setBackendCheckedAt(stamp());
+      const results = [diagnostics, products, campaigns, leads, linkPlans, creativeBriefs];
       const failed = results.find((result) => !result.ok) as { ok: false; error: string } | undefined;
       if (failed) {
-        setAvailability('unavailable');
+        setAvailability('fallback');
+        setFallbackReason(failed.error);
         setNotice(`Backend indisponível (${failed.error}). Fallback localStorage ativo.`);
         setState(local);
         return;
       }
       const backendState = saveXpeXLocalState({ ...local, products: products.ok ? products.data as XpeXCommerceProduct[] : local.products, campaigns: campaigns.ok ? campaigns.data as XpeXCommerceCampaign[] : local.campaigns, leads: leads.ok ? leads.data as XpeXCommerceLead[] : local.leads, linkPlans: linkPlans.ok ? linkPlans.data as XpeXCommerceLinkPlan[] : local.linkPlans, creativeBriefs: creativeBriefs.ok ? creativeBriefs.data as XpeXCommerceCreativeBrief[] : local.creativeBriefs });
       setAvailability('available');
-      setNotice('Backend controlado disponível. Dados carregados da API XpeX Commerce autenticada.');
+      setFallbackReason(null);
+      setNotice('Backend controlado disponível. Diagnóstico aprovado e dados carregados da API XpeX Commerce autenticada.');
       setState(backendState);
     }
     loadBackend();
@@ -58,7 +64,9 @@ export function useXpeXCommerceStore() {
   };
 
   const fallbackNotice = (error: string) => {
-    setAvailability('unavailable');
+    setAvailability('fallback');
+    setBackendCheckedAt(stamp());
+    setFallbackReason(error);
     setNotice(`Backend indisponível (${error}). Operação salva no localStorage.`);
   };
 
@@ -66,6 +74,9 @@ export function useXpeXCommerceStore() {
     state,
     mode,
     backendAvailability: availability,
+    backendStatus: availability,
+    backendCheckedAt,
+    fallbackReason,
     operationNotice: notice || getXpeXStorageModeDescription(mode, availability),
     async addProduct(input: NewProduct) {
       if (mode === 'backend') { const result = await xpexCommerceBackendClient.createProduct(input); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }

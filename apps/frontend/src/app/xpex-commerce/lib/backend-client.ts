@@ -2,6 +2,7 @@ import type { XpeXCommerceCampaign, XpeXCommerceCreativeBrief, XpeXCommerceLead,
 
 type ApiResult<T> = { ok: true; data: T } | { ok: false; error: string; status?: number };
 type BackendRecord = Record<string, any>;
+export type XpeXBackendDiagnostics = { moduleEnabled: boolean; organizationScoped: boolean; prismaAvailable: boolean; timestamp: string; supportedResources: string[] };
 const base = '/xpex-commerce';
 
 async function request<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
@@ -27,6 +28,7 @@ export const mapBackendLinkPlan = (item: BackendRecord): XpeXCommerceLinkPlan =>
 export const mapBackendCreativeBrief = (item: BackendRecord): XpeXCommerceCreativeBrief => ({ id: item.id, campaign: item.campaignId || 'Campanha backend', product: 'Produto backend', creator: 'Criador backend', hook: item.title || 'Criativo backend', slogan: item.type || 'Manual', caption: item.body || '', shortScript: item.body || '', whatsappText: 'Texto manual não enviado automaticamente.', status: recordStatusToLocal(item.status), createdAt: item.createdAt || new Date().toISOString(), updatedAt: item.updatedAt || item.createdAt || new Date().toISOString() });
 
 export const xpexCommerceBackendClient = {
+  checkDiagnostics() { return request<XpeXBackendDiagnostics>('/diagnostics'); },
   async listProducts() { const result = await request<BackendRecord[]>('/products'); return result.ok ? { ok: true as const, data: result.data.map(mapBackendProduct) } : result; },
   createProduct(input: Omit<XpeXCommerceProduct, 'id' | 'createdAt' | 'updatedAt'>) { return request<BackendRecord>('/products', { method: 'POST', body: JSON.stringify({ title: input.name, sourceUrl: input.mercadoLivreUrl || undefined, currency: 'BRL', score: Math.round(input.score), notes: input.notes || input.audienceFit }) }); },
   updateProductStatus(id: string, status: XpeXCommerceStatus) { return request<BackendRecord>(`/products/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status: localToRecordStatus(status) }) }); },
@@ -39,5 +41,9 @@ export const xpexCommerceBackendClient = {
   async listCreativeBriefs() { const result = await request<BackendRecord[]>('/creative-briefs'); return result.ok ? { ok: true as const, data: result.data.map(mapBackendCreativeBrief) } : result; },
   createCreativeBrief(input: Omit<XpeXCommerceCreativeBrief, 'id' | 'createdAt' | 'updatedAt'>) { return request<BackendRecord>('/creative-briefs', { method: 'POST', body: JSON.stringify({ type: 'manual', title: input.hook, body: [input.slogan, input.caption, input.shortScript, input.whatsappText].filter(Boolean).join('\n\n') }) }); },
 };
+
+export async function checkXpeXBackendDiagnostics() {
+  return xpexCommerceBackendClient.checkDiagnostics();
+}
 
 export type XpeXBackendResult<T> = ApiResult<T>;

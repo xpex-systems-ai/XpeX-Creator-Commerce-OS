@@ -68,3 +68,15 @@ Future endpoints should be auth-protected and organization-scoped. Suggested cap
 - [ ] Add production Prisma migration after the deployment migration convention is confirmed; no migrations directory exists in the inspected Prisma tree.
 - [ ] Add explicit permission policies such as `xpexCommerce.read/create/update` if the product decides to gate these routes beyond the existing authenticated organization context.
 - [ ] Add audit logging and rate limits before exposing imports, exports, redirects, external integrations, or automated generation.
+
+## Post-Phase 08 homologation checklist
+
+- [x] Added authenticated diagnostics for safe backend readiness checks.
+- [x] Diagnostics returns only module status, organization-scope confirmation, Prisma availability, timestamp, and supported resource names.
+- [x] Frontend backend mode remains opt-in through `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`.
+- [x] localStorage demo mode and fallback behavior remain available.
+- [x] CRUD smoke-test roteiro documented for products, campaigns, creators, leads, link plans, and creative briefs.
+- [x] Migration readiness checklist documented with backup, rollback, schema review, and human approval gates.
+- [x] Mercado Livre, Dub, n8n, OpenAI, WhatsApp, paid ads, provider tokens, and secrets remain out of scope.
+- [ ] Validate Phase 08 smoke tests with internal dummy data in a migrated non-production environment.
+- [ ] Add explicit permission capabilities before exposing imports, exports, redirects, external integrations, or automation triggers.

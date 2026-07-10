@@ -152,3 +152,23 @@ Prisma persistence model exists in Phase 06, but API endpoints remain planned un
 ## Compliance checks — planned
 
 Prisma persistence model exists in Phase 06, but API endpoints remain planned until the review workflow and approval semantics are finalized.
+
+## Phase 08 diagnostics and homologation
+
+Phase 08 adds a safe authenticated diagnostics route for backend homologation before external integrations.
+
+- `GET /xpex-commerce/diagnostics`
+
+Response contains only safe technical readiness fields:
+
+```json
+{
+  "moduleEnabled": true,
+  "organizationScoped": true,
+  "prismaAvailable": true,
+  "timestamp": "2026-07-10T00:00:00.000Z",
+  "supportedResources": ["products", "campaigns", "creators", "leads", "link-plans", "creative-briefs"]
+}
+```
+
+The route is mounted inside the existing authenticated XpeX Commerce controller and derives organization scope from the request context. It must not return user records, lead payloads, provider tokens, private URLs, infrastructure details, secrets, or API keys. The frontend calls it only through a relative authenticated request when `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`; failures keep the localStorage fallback active.

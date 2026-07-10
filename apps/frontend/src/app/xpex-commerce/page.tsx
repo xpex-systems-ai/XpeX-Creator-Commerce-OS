@@ -7,7 +7,7 @@ import { useXpeXCommerceStore } from './lib/use-xpex-commerce-store';
 
 export default function XpeXCommercePage() {
   const data = xpexCreatorCommerceMock;
-  const { state, mode, backendAvailability, operationNotice } = useXpeXCommerceStore();
+  const { state, mode, backendAvailability, backendCheckedAt, fallbackReason, operationNotice } = useXpeXCommerceStore();
   const metrics = [
     { title: 'Produtos', value: state.products.length, detail: mode === 'backend' ? 'Backend controlado com fallback local' : 'Produtos salvos no navegador' },
     { title: 'Campanhas', value: state.campaigns.length, detail: mode === 'backend' ? 'API autenticada ou fallback local' : 'Briefings manuais controlados' },
@@ -16,9 +16,22 @@ export default function XpeXCommercePage() {
     { title: 'Criativos locais', value: state.creativeBriefs.length, detail: 'Hooks e roteiros sem IA real' },
     { title: 'Criadores', value: state.creators.length, detail: 'Anderso como creator piloto' },
   ];
-  return <XpeXPageShell eyebrow="Phase 04 · Local controlled operations" title="XpeX Creator Commerce OS" description="Máquina de vendas com Mercado Livre, criadores, IA, links rastreáveis, redes sociais e automação — agora com operação local controlada via localStorage, sem APIs reais e sem banco.">
+  return <XpeXPageShell eyebrow="Phase 08 · Backend homologation" title="XpeX Creator Commerce OS" description="Máquina de vendas com Mercado Livre, criadores, IA, links rastreáveis, redes sociais e automação — com localStorage preservado, backend controlado opt-in, fallback seguro e diagnóstico operacional sem integrações externas.">
     <SafetyNotice mode={mode} availability={backendAvailability} notice={operationNotice} />
     <OperationModeBadge mode={mode} availability={backendAvailability} notice={operationNotice} />
+    <section className="rounded-[2rem] border border-[#F5B301]/25 bg-[#F5B301]/10 p-6">
+      <SectionHeader eyebrow="Phase 08 · Backend homologation" title="Diagnóstico operacional seguro" description="Painel de prontidão para validar o backend real antes de qualquer integração externa." />
+      <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard label="Modo atual" value={mode === 'backend' ? 'Backend' : 'Local'} detail={mode === 'backend' ? 'Opt-in por NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true' : 'Demo localStorage preservado'} />
+        <MetricCard label="Backend" value={backendAvailability} detail={backendAvailability === 'available' ? 'Diagnóstico autenticado disponível' : backendAvailability === 'fallback' ? 'Fallback localStorage ativo' : backendAvailability === 'disabled' ? 'Backend não habilitado' : 'Aguardando verificação'} />
+        <MetricCard label="Última checagem" value={backendCheckedAt ? new Date(backendCheckedAt).toLocaleTimeString('pt-BR') : '—'} detail={backendCheckedAt || 'Sem chamada ao backend nesta sessão'} />
+        <MetricCard label="Integrações externas" value="Off" detail="Mercado Livre, Dub, n8n, OpenAI, WhatsApp e ads não conectados" />
+      </div>
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
+        {['Frontend isolado', 'Backend client relativo', 'Auth existente', 'Organization scope', 'Fallback localStorage', 'APIs externas desligadas'].map((item) => <div key={item} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm font-bold text-white/75">✓ {item}</div>)}
+      </div>
+      {fallbackReason ? <p className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">Motivo do fallback: {fallbackReason}</p> : null}
+    </section>
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">{metrics.map((module) => <MetricCard key={module.title} label={module.title} value={module.value} detail={module.detail} />)}</section>
     <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-6">
       <ModuleCard href="/xpex-commerce/products" title="Produtos ML" detail="Cadastro manual local, score e status por produto para Anderso." cta="Abrir produtos" />
