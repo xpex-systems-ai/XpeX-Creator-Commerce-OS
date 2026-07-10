@@ -67,6 +67,21 @@
 
 <br /><br />
 
+## XpeX Creator Commerce OS foundation
+
+This repository is a fork that will evolve, in safe layers, into **XpeX Creator Commerce OS**: a creator-commerce operating system for Mercado Livre products, AI-assisted campaign planning, trackable links, creators, social publishing, CRM, metrics, and optimization. The current foundation remains the upstream Postiz open source application, and this fork preserves the original Postiz attribution and AGPL-3.0 license posture.
+
+Planned XpeX modules include:
+
+- Dashboard for products, campaigns, creators, links, leads, and performance.
+- Manual Mercado Livre product workflows before any live API integration.
+- Campaign planning for creator briefs, slogans, CTAs, and content status.
+- AI creative support for copy, video direction, visual prompts, and compliance review.
+- Reuse of the Postiz calendar as the social publishing layer.
+- Trackable links, lead capture, CRM follow-up, and metrics reporting.
+
+See the detailed architecture in [`docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md`](docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md). Phase 01 is only foundation and audit work; real commercial integrations, Mercado Livre API sync, paid ads automation, and production agents are reserved for later reviewed phases.
+
 ## 🔌 See the leading Postiz features
 
 <p align="center">
