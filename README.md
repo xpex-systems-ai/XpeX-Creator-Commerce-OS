@@ -82,6 +82,8 @@ Planned XpeX modules include:
 
 See the detailed architecture in [`docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md`](docs/xpex/CREATOR_COMMERCE_OS_BLUEPRINT.md). Phase 01 is only foundation and audit work; real commercial integrations, Mercado Livre API sync, paid ads automation, and production agents are reserved for later reviewed phases.
 
+Build/deploy note: this fork avoids mandatory external build-time dependencies where possible, including remote font resolution, so XpeX can be deployed more reliably in restricted environments while preserving the Postiz foundation.
+
 ## 🔌 See the leading Postiz features
 
 <p align="center">

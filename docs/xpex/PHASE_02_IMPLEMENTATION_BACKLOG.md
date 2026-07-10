@@ -2,6 +2,17 @@
 
 Phase 02 should add isolated XpeX surfaces without changing authentication, OAuth providers, or existing social publishing behavior.
 
+## 0. Build prerequisite
+- Prerequisite: the `apps/frontend` production build must pass before implementing Produtos, Campanhas, Criadores, dashboard, or other XpeX modules.
+- Risk: adding feature surfaces on top of an unstable build can hide infrastructure failures and slow safe reviews.
+- Acceptance: Phase 02 work starts only after frontend build validation is documented.
+
+## 0.1 Internal XpeX landing and commercial dashboard foundation
+- Probable files: isolated frontend routes/components under `apps/frontend`.
+- Risk: heavy rebrand work could unintentionally affect existing Postiz flows.
+- Dependencies: Phase 01.1 build stabilization and approved XpeX brand tokens.
+- Acceptance: a clearly scoped XpeX internal landing/dashboard surface exists after stabilization without replacing core Postiz navigation or behavior.
+
 ## 1. XpeX menu in frontend
 - Probable files: `apps/frontend` navigation/layout components.
 - Risk: confusing existing Postiz navigation or permissions.
