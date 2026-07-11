@@ -1,6 +1,6 @@
 'use client';
 
-import { DeployCommandBox, DeployEnvironmentMatrix, DeployGuardrailList, DeployReadinessGroupPanel, MetricCard, OperationModeBadge, SafetyNotice, SectionHeader, XpeXPageShell } from '../components';
+import { DeployCommandBox, DeployEnvironmentMatrix, DeployGuardrailList, DeployReadinessGroupPanel, MetricCard, OperationModeBadge, SafetyNotice, SectionHeader, XpeXPublicPreviewNotice, XpeXPageShell } from '../components';
 import { buildDeployReadinessChecklist, getDeployReadinessSummary, getXpeXDeployEnvironmentMatrix } from '../lib/deploy-readiness';
 import { useXpeXCommerceStore } from '../lib/use-xpex-commerce-store';
 
@@ -11,6 +11,7 @@ export default function XpeXDeployReadinessPage() {
   const environments = getXpeXDeployEnvironmentMatrix();
 
   return <XpeXPageShell eyebrow="Phase 13 · Deploy Preview e Railway Readiness" title="Deploy Readiness" description="Checklist visual para preparar Vercel Preview do frontend e Railway backend/banco em modo seguro, sem secrets, sem APIs externas e sem automações perigosas.">
+    <XpeXPublicPreviewNotice context="deploy-readiness" />
     <SafetyNotice mode={mode} availability={backendAvailability} notice={operationNotice} />
     <OperationModeBadge mode={mode} availability={backendAvailability} notice={operationNotice} />
 

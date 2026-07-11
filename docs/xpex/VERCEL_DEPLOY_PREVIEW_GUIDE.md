@@ -63,6 +63,29 @@ FRONTEND_URL=<vercel-preview-url-placeholder>
 
 Não configurar tokens reais de Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, anúncios pagos ou qualquer secret de produção no preview inicial.
 
+
+## Public Preview Gate
+
+Para visualizar o XpeX Creator Commerce OS sem login no Deploy Preview, configure explicitamente na Vercel:
+
+```bash
+XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true
+NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=false
+```
+
+O gate público é restrito a `/xpex-commerce` e subrotas. Ele existe apenas para o preview demo/local-first, não ativa backend real, não adiciona secrets e não liga Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, anúncios pagos ou redirect público real. Mantenha `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=false` no primeiro preview.
+
+Rotas de teste do preview público:
+
+- `/xpex-commerce`
+- `/xpex-commerce/deploy-readiness`
+- `/xpex-commerce/links`
+- `/xpex-commerce/utm-builder`
+- `/xpex-commerce/attribution`
+- `/xpex-commerce/link-performance`
+
+As rotas `/auth`, `/settings`, `/analytics`, APIs e demais rotas privadas do Postiz continuam protegidas pelo proxy global. Não configure tokens reais ou secrets de produção no ambiente de preview inicial.
+
 ## Checklist pós-deploy
 
 Abrir manualmente:

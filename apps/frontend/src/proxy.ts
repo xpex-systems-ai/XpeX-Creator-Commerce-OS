@@ -10,6 +10,17 @@ import {
 } from '@gitroom/react/translation/i18n.config';
 acceptLanguage.languages(languages);
 
+function isXpeXCommerceRoute(pathname: string) {
+  return pathname === '/xpex-commerce' || pathname.startsWith('/xpex-commerce/');
+}
+
+function isXpeXCommercePublicPreviewEnabled() {
+  return (
+    process.env.XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED === 'true' ||
+    process.env.NEXT_PUBLIC_XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED === 'true'
+  );
+}
+
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const nextUrl = request.nextUrl;
@@ -88,6 +99,18 @@ export async function proxy(request: NextRequest) {
 
   const org = nextUrl.searchParams.get('org');
   const url = new URL(nextUrl).search;
+
+  // Safe public preview gate for the demo/local-first XpeX Commerce surface only.
+  // This intentionally does not affect /api, /auth, /analytics, /settings,
+  // /launches, /integrations, /provider, /modal or any other Postiz route.
+  if (
+    isXpeXCommerceRoute(nextUrl.pathname) &&
+    isXpeXCommercePublicPreviewEnabled() &&
+    !authCookie
+  ) {
+    return topResponse;
+  }
+
   if (!nextUrl.pathname.startsWith('/auth') && !authCookie) {
     const providers = ['google', 'settings'];
     const findIndex = providers.find((p) => nextUrl.href.indexOf(p) > -1);
