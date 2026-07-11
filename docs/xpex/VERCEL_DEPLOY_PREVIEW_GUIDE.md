@@ -128,3 +128,17 @@ Se o preview quebrar:
 2. Reverter o PR ou criar novo commit de correção.
 3. Desativar/ignorar o preview quebrado na Vercel.
 4. Repetir o smoke test após correção.
+
+## Se ainda cair no login
+
+Quando `/xpex-commerce` redirecionar para `/auth/login`, trate como um sinal seguro de que o Public Preview Gate não foi visto como habilitado pelo runtime daquele deployment. Use este checklist antes de alterar código de autenticação:
+
+1. Confirme que a URL aberta pertence ao projeto Vercel correto do repositório `xpex-systems-ai/XpeX-Creator-Commerce-OS`.
+2. Confirme que `XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true` está configurada no ambiente correto: **Preview** para Deploy Preview ou **Production** para deploy promovido.
+3. Faça um novo redeploy depois de criar ou alterar a env. Criar a variável após o deploy não altera automaticamente o runtime de um deployment já gerado.
+4. Abra a URL direta `/xpex-commerce` no deployment com status **success**.
+5. Limpe cache, use aba anônima ou teste uma URL recém-gerada para evitar sessão/cache antigo.
+6. Valide no DevTools/Network se os headers seguros aparecem quando o gate está ativo: `x-xpex-preview-route: true` e `x-xpex-preview-gate: enabled`.
+7. Se houver múltiplos projetos Vercel apontando para o mesmo repo, repita a conferência de env no projeto que realmente serve o domínio aberto.
+
+Esses headers são diagnósticos booleanos e não carregam valores reais de env, tokens, secrets, cookies ou dados de usuário.

@@ -14,10 +14,19 @@ function isXpeXCommerceRoute(pathname: string) {
   return pathname === '/xpex-commerce' || pathname.startsWith('/xpex-commerce/');
 }
 
+function normalizePublicPreviewGateValue(value?: string) {
+  return value?.trim().toLowerCase() === 'true';
+}
+
 function isXpeXCommercePublicPreviewEnabled() {
-  return (
-    process.env.XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED === 'true' ||
-    process.env.NEXT_PUBLIC_XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED === 'true'
+  const serverSideGate = process.env.XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED;
+
+  if (serverSideGate !== undefined) {
+    return normalizePublicPreviewGateValue(serverSideGate);
+  }
+
+  return normalizePublicPreviewGateValue(
+    process.env.NEXT_PUBLIC_XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED
   );
 }
 
@@ -101,14 +110,19 @@ export async function proxy(request: NextRequest) {
   const url = new URL(nextUrl).search;
 
   // Safe public preview gate for the demo/local-first XpeX Commerce surface only.
+  // The bypass is intentionally scoped to /xpex-commerce and subroutes, and it
+  // must stay before the global unauthenticated /auth redirect below.
   // This intentionally does not affect /api, /auth, /analytics, /settings,
   // /launches, /integrations, /provider, /modal or any other Postiz route.
-  if (
-    isXpeXCommerceRoute(nextUrl.pathname) &&
-    isXpeXCommercePublicPreviewEnabled() &&
-    !authCookie
-  ) {
-    return topResponse;
+  if (isXpeXCommerceRoute(nextUrl.pathname) && !authCookie) {
+    if (isXpeXCommercePublicPreviewEnabled()) {
+      topResponse.headers.set('x-xpex-preview-route', 'true');
+      topResponse.headers.set('x-xpex-preview-gate', 'enabled');
+      return topResponse;
+    }
+
+    // Gate disabled by default: unauthenticated XpeX Commerce preview requests
+    // fall through to the existing /auth redirect for safety.
   }
 
   if (!nextUrl.pathname.startsWith('/auth') && !authCookie) {
