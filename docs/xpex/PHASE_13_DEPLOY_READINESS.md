@@ -12,7 +12,7 @@ A Fase 13 move o XpeX Creator Commerce OS do ciclo apenas local/PR para uma etap
 - `apps/frontend/package.json` define `build` como `next build`.
 - `apps/backend/package.json` define `build` como `cross-env NODE_ENV=production nest build` e `start` apontando para `dist/apps/backend/src/main.js`.
 - `apps/orchestrator/package.json` usa padrão equivalente ao backend.
-- Frontend correto para Vercel: `apps/frontend` com comando `pnpm --filter ./apps/frontend run build`.
+- Frontend recomendado para Vercel: `Root Directory = apps/frontend` com comando `pnpm run build`; se o root Vercel for o monorepo (`./`), usar a alternativa `pnpm --filter ./apps/frontend run build`.
 - Backend correto para Railway readiness: `apps/backend` com `pnpm --filter ./apps/backend run build` e start filtrado.
 
 ## O que entra
@@ -38,7 +38,7 @@ A Fase 13 move o XpeX Creator Commerce OS do ciclo apenas local/PR para uma etap
 ## Sequência operacional recomendada
 
 1. Atualizar/mergear branch com `main` revisado.
-2. Criar Vercel Preview do frontend em `apps/frontend`.
+2. Criar Vercel Preview do frontend com root `apps/frontend` e build `pnpm run build`, mantendo localStorage demo e backend opt-in desligado.
 3. Validar visualmente dashboard e rotas XpeX.
 4. Preparar Railway backend/banco sem ligar integrações externas.
 5. Habilitar backend opt-in apenas em ambiente controlado após diagnostics.

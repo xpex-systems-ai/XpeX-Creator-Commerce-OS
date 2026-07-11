@@ -34,7 +34,7 @@ export function buildDeployReadinessChecklist(): DeployReadinessGroup[] {
       description: 'Primeiro deploy recomendado: interface Next.js do app frontend com localStorage demo e backend opt-in desligado.',
       items: [
         { id: 'frontend-root', label: 'Root do projeto validado', detail: 'Configurar Vercel apontando para apps/frontend dentro do monorepo.', target: 'vercel-frontend', status: 'ready', owner: 'Frontend' },
-        { id: 'frontend-build', label: 'Build command validado', detail: 'Usar pnpm --filter ./apps/frontend run build conforme package.json do monorepo.', target: 'vercel-frontend', status: 'ready', owner: 'Frontend' },
+        { id: 'frontend-build', label: 'Build command validado por root', detail: 'Recomendado na Vercel: Root directory apps/frontend com pnpm run build. Alternativa filtrada somente quando o root for o monorepo.', target: 'vercel-frontend', status: 'ready', owner: 'Frontend' },
         { id: 'frontend-local-storage', label: 'localStorage demo preservado', detail: 'Sem backend obrigatório; dados demonstrativos continuam salvos no navegador.', target: 'local-safety', status: 'ready', owner: 'Operação' },
         { id: 'frontend-backend-opt-in', label: 'Backend opt-in desligado por padrão', detail: 'NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED deve permanecer diferente de true no primeiro preview.', target: 'vercel-frontend', status: 'ready', owner: 'Operação' },
       ],
