@@ -20,7 +20,10 @@ export type XpeXCommerceStatus =
   | 'perdido'
   | 'publicado manualmente'
   | 'analisado'
-  | 'criado';
+  | 'criado'
+  | 'rascunho'
+  | 'aprovado'
+  | 'arquivado';
 
 export type XpeXCommerceChannel = 'Instagram' | 'TikTok' | 'YouTube Shorts' | 'WhatsApp Status' | 'WhatsApp' | 'Manual' | 'Outro';
 
@@ -144,6 +147,12 @@ export type XpeXManualSale = {
   createdAt: string;
   updatedAt: string;
 };
+export type LinkStatus = 'rascunho' | 'aprovado' | 'publicado manualmente' | 'pausado' | 'arquivado';
+export type LinkRiskStatus = 'safe' | 'attention' | 'blocked';
+export type UtmParams = { source: string; medium: string; campaign: string; content: string; term?: string };
+export type TrackedLink = { id: string; campaign: string; product: string; creator: string; channel: XpeXCommerceChannel; creative: string; destinationUrl: string; utmUrl: string; slug: string; utm: UtmParams; status: LinkStatus; riskStatus: LinkRiskStatus; manualClicks: number; manualLeads: number; manualSales: number; manualRevenue: number; estimatedCommission: number; notes: string; createdAt: string; updatedAt: string };
+export type LinkAttribution = { id: string; linkId: string; leadId?: string; saleId?: string; kind: 'lead' | 'sale'; status: 'informado' | 'conferido' | 'revisar'; reportedValue: number; estimatedCommission: number; observation: string; date: string; createdAt: string; updatedAt: string };
+export type LinkPerformanceSnapshot = { linkId: string; slug: string; campaign: string; creator: string; channel: XpeXCommerceChannel; creative: string; clicks: number; leads: number; sales: number; revenue: number; estimatedCommission: number; leadRate: number; salesRate: number; score: number };
 
 export type XpeXCommerceLocalState = {
   version: 1;
@@ -157,6 +166,8 @@ export type XpeXCommerceLocalState = {
   leads: XpeXCommerceLead[];
   manualMetrics: XpeXManualMetric[];
   manualSales: XpeXManualSale[];
+  trackedLinks: TrackedLink[];
+  linkAttributions: LinkAttribution[];
   lastUpdatedAt: string;
 };
 

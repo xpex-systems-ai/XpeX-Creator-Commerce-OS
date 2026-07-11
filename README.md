@@ -183,3 +183,7 @@ This repository's source code is available under the [AGPL-3.0 license](LICENSE)
 ## XpeX Creator Commerce OS — Phase 11
 
 A Fase 11 adiciona métricas manuais, rastreamento operacional, leads revisados por humano, painel de performance do piloto e calendário de 7 dias para a campanha **Seu quarto vira palco** com Anderso. A camada permanece segura: sem APIs externas, sem Mercado Livre API, sem Dub, sem n8n, sem OpenAI, sem WhatsApp API, sem anúncios pagos automatizados e sem publicação automática, preservando a documentação original do Postiz e a licença AGPL.
+
+### XpeX Phase 12 — Tracked Links, UTMs and Manual Attribution
+
+Phase 12 adds a safe local layer for tracked links, UTM building and manual attribution. Operators can prepare campaign/creator/channel/creative links, validate http/https destinations, assign manual leads and sales, and review link performance before any controlled shortener or redirect integration is approved. Postiz AGPL attribution and the original documentation remain preserved.

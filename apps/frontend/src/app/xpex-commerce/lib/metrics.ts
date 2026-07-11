@@ -84,3 +84,10 @@ export function buildPerformanceSnapshot(input: { campaign: string; metrics: Cam
   const recommendations = [bestCreative?.score ? `Aumentar variações do criativo vencedor: ${bestCreative.creative}.` : 'Publicar manualmente os primeiros criativos aprovados para gerar dados.', bestChannel?.views ? `Repetir o melhor canal medido: ${bestChannel.channel}.` : 'Registrar visualizações e cliques estimados por canal após cada publicação manual.', totals.leads && !totals.sales ? 'Revisar CTA e resposta humana para converter intenções em vendas manuais.' : 'Manter revisão humana antes de escalar qualquer canal.'];
   return { campaign: input.campaign, generatedAt: new Date().toISOString(), totals, rates: { ctr: calculateCtr(totals.clicks, totals.views), leadRate: calculateLeadRate(totals.leads, totals.clicks), conversionRate: calculateConversionRate(totals.sales, totals.leads) }, channels: channelMetrics, creatives, bestChannel, bestCreative, recommendations };
 }
+
+
+export const calculateLinkCtr = (clicks: number, views: number) => safePercent(clicks, views);
+export const calculateLinkLeadRate = (leads: number, clicks: number) => safePercent(leads, clicks);
+export const calculateLinkSalesRate = (sales: number, leads: number) => safePercent(sales, leads);
+export const calculateRevenueByLink = (items: { reportedValue?: number; manualRevenue?: number }[]) => Number(items.reduce((sum, item) => sum + (item.reportedValue || item.manualRevenue || 0), 0).toFixed(2));
+export const calculateCommissionByLink = (items: { estimatedCommission?: number }[]) => Number(items.reduce((sum, item) => sum + (item.estimatedCommission || 0), 0).toFixed(2));

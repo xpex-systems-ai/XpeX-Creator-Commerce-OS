@@ -6,8 +6,9 @@ import { buildImportPlan, type ImportPlan } from './import-planner';
 import { exportXpeXLocalStateJson, getXpeXLocalState, resetXpeXLocalState, saveXpeXLocalState } from './local-store';
 import { getXpeXCommerceStorageMode, getXpeXStorageModeDescription, type XpeXBackendAvailability } from './storage-mode';
 import { buildPerformanceSnapshot as buildSnapshot, calculateEstimatedCommission } from './metrics';
+import { buildLinkAttributionSnapshot } from './link-attribution';
 import type { CampaignMetric, LeadMetric, ManualSaleMetric } from './metrics';
-import type { XpeXCommerceCampaign, XpeXCommerceCreativeBrief, XpeXCommerceLead, XpeXCommerceLinkPlan, XpeXCommerceLocalState, XpeXCommerceProduct, XpeXCommerceStatus } from './types';
+import type { XpeXCommerceCampaign, XpeXCommerceCreativeBrief, XpeXCommerceLead, XpeXCommerceLinkPlan, XpeXCommerceLocalState, LinkAttribution, LinkStatus, TrackedLink, XpeXCommerceProduct, XpeXCommerceStatus } from './types';
 
 const id = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const stamp = () => new Date().toISOString();
@@ -19,6 +20,8 @@ type NewLinkPlan = Omit<XpeXCommerceLinkPlan, 'id' | 'createdAt' | 'updatedAt'>;
 type NewCreativeBrief = Omit<XpeXCommerceCreativeBrief, 'id' | 'createdAt' | 'updatedAt'>;
 type NewManualMetric = Omit<CampaignMetric, 'id' | 'createdAt' | 'updatedAt'>;
 type NewManualSale = Omit<ManualSaleMetric, 'id' | 'createdAt' | 'updatedAt' | 'estimatedCommission'>;
+type NewTrackedLink = Omit<TrackedLink, 'id' | 'createdAt' | 'updatedAt'>;
+type NewLinkAttribution = Omit<LinkAttribution, 'id' | 'createdAt' | 'updatedAt'>;
 
 export function useXpeXCommerceStore() {
   const [state, setState] = useState<XpeXCommerceLocalState>(() => getXpeXLocalState());
@@ -187,6 +190,28 @@ export function useXpeXCommerceStore() {
       if (mode === 'backend') { const result = await xpexCommerceBackendClient.createCreativeBrief(input); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }
       const time = stamp();
       persist((current) => ({ ...current, creativeBriefs: [{ ...input, id: id('creative'), createdAt: time, updatedAt: time }, ...current.creativeBriefs] }));
+    },
+    addTrackedLink(input: NewTrackedLink) {
+      const time = stamp();
+      persist((current) => ({ ...current, trackedLinks: [{ ...input, id: id('tracked'), createdAt: time, updatedAt: time }, ...(current.trackedLinks || [])] }));
+      setNotice('Link rastreável manual salvo localmente sem redirect público ou encurtador externo.');
+    },
+    updateTrackedLinkStatus(linkId: string, status: LinkStatus) {
+      const time = stamp();
+      persist((current) => ({ ...current, trackedLinks: (current.trackedLinks || []).map((link) => link.id === linkId ? { ...link, status, updatedAt: time } : link) }));
+    },
+    assignLeadToLink(input: Omit<NewLinkAttribution, 'kind'>) {
+      const time = stamp();
+      persist((current) => ({ ...current, linkAttributions: [{ ...input, kind: 'lead', id: id('attr'), createdAt: time, updatedAt: time }, ...(current.linkAttributions || [])] }));
+    },
+    assignSaleToLink(input: Omit<NewLinkAttribution, 'kind'>) {
+      const time = stamp();
+      persist((current) => ({ ...current, linkAttributions: [{ ...input, kind: 'sale', id: id('attr'), createdAt: time, updatedAt: time }, ...(current.linkAttributions || [])] }));
+    },
+    buildLinkPerformanceSnapshot(linkId: string) {
+      const local = getXpeXLocalState();
+      const link = (local.trackedLinks || []).find((item) => item.id === linkId);
+      return link ? buildLinkAttributionSnapshot(link, local.linkAttributions || []) : null;
     },
     async updateProductStatus(productId: string, status: XpeXCommerceStatus) {
       if (mode === 'backend') { const result = await xpexCommerceBackendClient.updateProductStatus(productId, status); if (!result.ok) fallbackNotice((result as { ok: false; error: string }).error); }
