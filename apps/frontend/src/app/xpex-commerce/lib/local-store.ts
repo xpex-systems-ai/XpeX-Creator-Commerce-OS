@@ -25,6 +25,8 @@ export function seedXpeXLocalState(): XpeXCommerceLocalState {
     ],
     manualSales: [{ id: 'sale-demo-telao', campaign: 'Seu quarto vira palco', channel: 'Instagram', creative: 'Seu quarto parece normal até isso ligar.', product: 'Projetor portátil', quantity: 1, grossAmount: 320, commissionRate: 8, estimatedCommission: 25.6, date: timestamp.slice(0, 10), notes: 'Venda informada manualmente; pendente de conferência humana.', createdAt: timestamp, updatedAt: timestamp }],
     linkPlans: [{ id: 'link-telao-anderso-instagram', campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', channel: 'Instagram', slug: '/telao-anderso-instagram', destinationUrl: '', status: 'Planejado', notes: 'Slug planejado; provedor de links entra em fase futura.', createdAt: timestamp, updatedAt: timestamp }],
+    trackedLinks: [{ id: 'tracked-telao-instagram', campaign: 'Seu quarto vira palco', product: 'Projetor portátil', creator: 'Anderso', channel: 'Instagram', creative: 'Seu quarto parece normal até isso ligar.', destinationUrl: 'https://example.com/projetor-portatil', utmUrl: 'https://example.com/projetor-portatil?utm_source=instagram&utm_medium=reels&utm_campaign=seu-quarto-vira-palco&utm_content=quarto-palco-anderso', slug: '/seu-quarto-vira-palco-anderso-instagram', utm: { source: 'instagram', medium: 'reels', campaign: 'seu-quarto-vira-palco', content: 'quarto-palco-anderso' }, status: 'publicado manualmente', riskStatus: 'safe', manualClicks: 42, manualLeads: 12, manualSales: 1, manualRevenue: 320, estimatedCommission: 25.6, notes: 'Seed demo seguro; sem redirect público e sem encurtador externo.', createdAt: timestamp, updatedAt: timestamp }],
+    linkAttributions: [{ id: 'attr-demo-telao', linkId: 'tracked-telao-instagram', leadId: 'lead-demo-telao', kind: 'lead', status: 'conferido', reportedValue: 0, estimatedCommission: 0, observation: 'Lead atribuído manualmente ao link demo.', date: timestamp.slice(0, 10), createdAt: timestamp, updatedAt: timestamp }],
     leads: [{ id: 'lead-demo-telao', name: 'Lead demo TELÃO', channel: 'Instagram', interestedProduct: 'Projetor portátil', campaign: 'Seu quarto vira palco', creator: 'Anderso', status: 'Novo', observation: 'Exemplo local para validar CRM sem WhatsApp/API.', createdAt: timestamp, updatedAt: timestamp }],
   };
 }
@@ -45,7 +47,7 @@ export function getXpeXLocalState(): XpeXCommerceLocalState {
 }
 
 function normalizeXpeXLocalState(state: XpeXCommerceLocalState): XpeXCommerceLocalState {
-  return { ...state, version: 1, schemaVersion: SCHEMA_VERSION, source: EXPORT_SOURCE, manualMetrics: state.manualMetrics || [], manualSales: state.manualSales || [] };
+  return { ...state, version: 1, schemaVersion: SCHEMA_VERSION, source: EXPORT_SOURCE, manualMetrics: state.manualMetrics || [], manualSales: state.manualSales || [], trackedLinks: state.trackedLinks || seedXpeXLocalState().trackedLinks, linkAttributions: state.linkAttributions || [] };
 }
 
 export function saveXpeXLocalState(state: XpeXCommerceLocalState): XpeXCommerceLocalState {
