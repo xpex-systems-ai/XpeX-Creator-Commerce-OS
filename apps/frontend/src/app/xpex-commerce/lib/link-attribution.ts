@@ -42,13 +42,26 @@ export function validateTrackedLink(link: Pick<TrackedLink, 'destinationUrl' | '
   return errors;
 }
 
-export function buildLinkAttributionSnapshot(link: TrackedLink, attributions: LinkAttribution[] = []): LinkPerformanceSnapshot {
+export function buildTrackedLinkDisplayMetrics(link: TrackedLink, attributions: LinkAttribution[] = []) {
   const related = attributions.filter((item) => item.linkId === link.id);
-  const leads = related.filter((item) => item.kind === 'lead').length + link.manualLeads;
-  const sales = related.filter((item) => item.kind === 'sale').length + link.manualSales;
-  const revenue = related.reduce((sum, item) => sum + (item.reportedValue || 0), 0) + link.manualRevenue;
-  const commission = related.reduce((sum, item) => sum + (item.estimatedCommission || 0), 0) + link.estimatedCommission;
-  return { linkId: link.id, slug: link.slug, campaign: link.campaign, creator: link.creator, channel: link.channel, creative: link.creative, clicks: link.manualClicks, leads, sales, revenue, estimatedCommission: Number(commission.toFixed(2)), leadRate: pct(leads, link.manualClicks), salesRate: pct(sales, leads), score: Number((sales * 100 + leads * 12 + link.manualClicks + commission).toFixed(2)) };
+  const attributedLeads = related.filter((item) => item.kind === 'lead').length;
+  const attributedSales = related.filter((item) => item.kind === 'sale').length;
+  const attributedRevenue = related.reduce((sum, item) => sum + (item.reportedValue || 0), 0);
+  const attributedCommission = related.reduce((sum, item) => sum + (item.estimatedCommission || 0), 0);
+  return {
+    manualClicks: link.manualClicks,
+    manualLeads: link.manualLeads + attributedLeads,
+    manualSales: link.manualSales + attributedSales,
+    manualRevenue: Number((link.manualRevenue + attributedRevenue).toFixed(2)),
+    estimatedCommission: Number((link.estimatedCommission + attributedCommission).toFixed(2)),
+    attributedLeads,
+    attributedSales,
+  };
+}
+
+export function buildLinkAttributionSnapshot(link: TrackedLink, attributions: LinkAttribution[] = []): LinkPerformanceSnapshot {
+  const totals = buildTrackedLinkDisplayMetrics(link, attributions);
+  return { linkId: link.id, slug: link.slug, campaign: link.campaign, creator: link.creator, channel: link.channel, creative: link.creative, clicks: totals.manualClicks, leads: totals.manualLeads, sales: totals.manualSales, revenue: totals.manualRevenue, estimatedCommission: totals.estimatedCommission, leadRate: pct(totals.manualLeads, totals.manualClicks), salesRate: pct(totals.manualSales, totals.manualLeads), score: Number((totals.manualSales * 100 + totals.manualLeads * 12 + totals.manualClicks + totals.estimatedCommission).toFixed(2)) };
 }
 
 export function rankTrackedLinks(links: TrackedLink[], attributions: LinkAttribution[] = []) {

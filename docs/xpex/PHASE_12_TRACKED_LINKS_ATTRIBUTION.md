@@ -25,3 +25,8 @@ Não há Dub, redirect público real, Mercado Livre API, rastreamento automátic
 ## Próxima Fase 13
 
 Preparar redirect interno seguro ou integração de encurtador aprovada, ainda em ambiente controlado, com revisão humana, logs claros, escopo por organização e sem captura silenciosa.
+
+
+## Nota de consistência do PR #14
+
+`/xpex-commerce/links`, `/xpex-commerce/attribution` e `/xpex-commerce/link-performance` devem usar a mesma lógica local de totais atribuídos. Leads, vendas e comissão continuam sendo métricas manuais, derivadas de `linkAttributions` e dos valores base do link, sem tracking automático, sem redirect público real e sem chamada a provedor externo.
