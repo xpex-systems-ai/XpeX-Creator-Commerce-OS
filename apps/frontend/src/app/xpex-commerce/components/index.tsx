@@ -12,13 +12,15 @@ export function XpeXPageShell({ eyebrow, title, description, children }: { eyebr
 
 
 
-export function XpeXPublicPreviewNotice({ context = 'dashboard' }: { context?: 'dashboard' | 'deploy-readiness' }) {
-  const deployCopy = context === 'deploy-readiness'
-    ? 'O acesso público de preview depende de XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true e deve permanecer desligado por padrão fora do preview controlado.'
-    : 'Esta tela pode ser aberta em preview público somente quando a variável server-side XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true estiver configurada.';
+export function XpeXStandaloneNotice({ context = 'dashboard' }: { context?: 'dashboard' | 'deploy-readiness' }) {
+  const locationCopy = context === 'deploy-readiness'
+    ? 'Use esta página para validar que o corredor /xpex-commerce abre por padrão e que as rotas privadas continuam no fluxo protegido do Postiz.'
+    : 'O XpeX Commerce agora abre por padrão em /xpex-commerce como superfície standalone/manual-first.';
 
-  return <aside className="rounded-[2rem] border border-[#F5B301]/30 bg-[#F5B301]/10 p-5 text-sm leading-6 text-amber-50"><strong>Preview público seguro XpeX · Fase 14:</strong> {deployCopy} A experiência é demo/local-first, salva dados no localStorage do navegador, mantém backend opt-in desligado por padrão e não executa Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, anúncios pagos, redirect público real, secrets, cookies novos, fingerprinting ou tracking silencioso. Não use dados reais sensíveis neste preview.</aside>;
+  return <aside className="rounded-[2rem] border border-[#F5B301]/30 bg-[#F5B301]/10 p-5 text-sm leading-6 text-amber-50"><strong>Superfície standalone XpeX · Fase 16:</strong> {locationCopy} O backend real continua opt-in, o modo localStorage/demo permanece preservado e Mercado Livre API, Dub, n8n, OpenAI, WhatsApp e anúncios pagos seguem desligados. Não insira dados sensíveis reais enquanto o XpeX não tiver auth/tenant próprio; esta camada não cria cookies, tracking, pixel ou fingerprinting.</aside>;
 }
+
+export const XpeXPublicPreviewNotice = XpeXStandaloneNotice;
 
 export function SafetyNotice({ mode = 'local', availability = 'disabled', notice }: { mode?: XpeXStorageMode; availability?: XpeXBackendAvailability; notice?: string }) {
   const label = getXpeXStorageModeLabel(mode);

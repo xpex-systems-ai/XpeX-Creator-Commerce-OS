@@ -1,8 +1,8 @@
-# XpeX Phase 13 — Vercel Deploy Preview Guide
+# XpeX Phase 16 — Vercel Deploy Preview Guide
 
 ## Objetivo
 
-Publicar o frontend do XpeX Creator Commerce OS em **Deploy Preview na Vercel** para validação visual, mantendo o modo demo via `localStorage` e o backend opt-in desligado.
+Publicar o frontend do XpeX Creator Commerce OS em **Deploy Preview na Vercel** para validação visual. Após a Fase 16, `/xpex-commerce` abre sem login por padrão como superfície standalone/manual-first, mantendo o modo demo via `localStorage` e o backend opt-in desligado.
 
 ## Estrutura verificada
 
@@ -48,14 +48,16 @@ Não misture root `apps/frontend` com comando filtrado do monorepo.
 4. Definir **Install Command** como `pnpm install`.
 5. Definir **Build Command** como `pnpm run build`.
 6. Manter output padrão do Next.js (`.next`, quando a Vercel solicitar output manual).
-7. Criar Deploy Preview a partir do PR da Fase 13.
-8. Abrir `/xpex-commerce` e validar a navegação.
+7. Criar Deploy Preview a partir do PR da Fase 16.
+8. Abrir `/xpex-commerce` e validar a navegação sem login.
+9. Confirmar que `/analytics`, `/settings` e `/launches` continuam exigindo autenticação.
 
 ## Variáveis permitidas apenas como placeholders
 
 Use somente placeholders e valores não sensíveis no guia/PR. O primeiro preview deve manter backend desativado:
 
 ```bash
+XPEX_COMMERCE_REQUIRE_AUTH=false
 NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=false
 NEXT_PUBLIC_BACKEND_URL=<optional-preview-backend-placeholder>
 FRONTEND_URL=<vercel-preview-url-placeholder>
@@ -64,27 +66,36 @@ FRONTEND_URL=<vercel-preview-url-placeholder>
 Não configurar tokens reais de Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, anúncios pagos ou qualquer secret de produção no preview inicial.
 
 
-## Public Preview Gate
+## Standalone open surface
 
-Para visualizar o XpeX Creator Commerce OS sem login no Deploy Preview, configure explicitamente na Vercel:
+Após a Fase 16, `/xpex-commerce` e subrotas abrem sem login por padrão. A operação não depende mais de `XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true`; essa variável permanece apenas como compatibilidade legada/diagnóstico.
+
+Para fechar novamente o corredor XpeX e enviá-lo ao fluxo protegido do Postiz, configure opcionalmente:
 
 ```bash
-XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true
+XPEX_COMMERCE_REQUIRE_AUTH=true
 NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=false
 ```
 
-O gate público é restrito a `/xpex-commerce` e subrotas. Ele existe apenas para o preview demo/local-first, não ativa backend real, não adiciona secrets e não liga Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, anúncios pagos ou redirect público real. Mantenha `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=false` no primeiro preview.
+O bypass continua restrito a `/xpex-commerce` e subrotas. Ele não ativa backend real, não expõe `/api`, não adiciona secrets e não liga Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, anúncios pagos ou redirect público real. Mantenha `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=false` no primeiro preview.
 
-Rotas de teste do preview público:
+Smoke tests abertos esperados:
 
 - `/xpex-commerce`
+- `/xpex-commerce/preview-status`
 - `/xpex-commerce/deploy-readiness`
 - `/xpex-commerce/links`
 - `/xpex-commerce/utm-builder`
 - `/xpex-commerce/attribution`
 - `/xpex-commerce/link-performance`
 
-As rotas `/auth`, `/settings`, `/analytics`, APIs e demais rotas privadas do Postiz continuam protegidas pelo proxy global. Não configure tokens reais ou secrets de produção no ambiente de preview inicial.
+Smoke tests protegidos esperados:
+
+- `/auth/login` deve abrir como login.
+- `/analytics` deve exigir auth.
+- `/settings` deve exigir auth.
+- `/launches` deve exigir auth.
+- `/api` não foi exposta pela Fase 16.
 
 ## Checklist pós-deploy
 
@@ -99,6 +110,7 @@ Abrir manualmente:
 - `/xpex-commerce/utm-builder`
 - `/xpex-commerce/attribution`
 - `/xpex-commerce/link-performance`
+- `/xpex-commerce/preview-status`
 - `/xpex-commerce/deploy-readiness`
 
 ## Validação anti-regressão
@@ -131,14 +143,14 @@ Se o preview quebrar:
 
 ## Se ainda cair no login
 
-Quando `/xpex-commerce` redirecionar para `/auth/login`, trate como um sinal seguro de que o Public Preview Gate não foi visto como habilitado pelo runtime daquele deployment. Use este checklist antes de alterar código de autenticação:
+Quando `/xpex-commerce` redirecionar para `/auth/login` após a Fase 16, trate primeiro como sinal de que `XPEX_COMMERCE_REQUIRE_AUTH=true` pode estar ativo no ambiente daquele deployment. Use este checklist antes de alterar código de autenticação:
 
 1. Confirme que a URL aberta pertence ao projeto Vercel correto do repositório `xpex-systems-ai/XpeX-Creator-Commerce-OS`.
-2. Confirme que `XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true` está configurada no ambiente correto: **Preview** para Deploy Preview ou **Production** para deploy promovido.
+2. Confirme que `XPEX_COMMERCE_REQUIRE_AUTH` não está configurada como `true` no ambiente correto: **Preview** para Deploy Preview ou **Production** para deploy promovido.
 3. Faça um novo redeploy depois de criar ou alterar a env. Criar a variável após o deploy não altera automaticamente o runtime de um deployment já gerado.
 4. Abra a URL direta `/xpex-commerce` no deployment com status **success**.
 5. Limpe cache, use aba anônima ou teste uma URL recém-gerada para evitar sessão/cache antigo.
-6. Valide no DevTools/Network se os headers seguros aparecem quando o gate está ativo: `x-xpex-preview-route: true` e `x-xpex-preview-gate: enabled`.
+6. Valide no DevTools/Network se os headers seguros aparecem: `x-xpex-standalone-surface: open` e `x-xpex-auth-boundary: postiz-private-routes-preserved`.
 7. Se houver múltiplos projetos Vercel apontando para o mesmo repo, repita a conferência de env no projeto que realmente serve o domínio aberto.
 
 Esses headers são diagnósticos booleanos e não carregam valores reais de env, tokens, secrets, cookies ou dados de usuário.

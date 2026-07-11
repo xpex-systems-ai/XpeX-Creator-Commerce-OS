@@ -18,6 +18,10 @@ function normalizePublicPreviewGateValue(value?: string) {
   return value?.trim().toLowerCase() === 'true';
 }
 
+function isXpeXCommerceAuthRequired() {
+  return process.env.XPEX_COMMERCE_REQUIRE_AUTH?.trim().toLowerCase() === 'true';
+}
+
 function isXpeXCommercePublicPreviewEnabled() {
   const serverSideGate = process.env.XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED;
 
@@ -109,20 +113,27 @@ export async function proxy(request: NextRequest) {
   const org = nextUrl.searchParams.get('org');
   const url = new URL(nextUrl).search;
 
-  // Safe public preview gate for the demo/local-first XpeX Commerce surface only.
-  // The bypass is intentionally scoped to /xpex-commerce and subroutes, and it
-  // must stay before the global unauthenticated /auth redirect below.
-  // This intentionally does not affect /api, /auth, /analytics, /settings,
-  // /launches, /integrations, /provider, /modal or any other Postiz route.
-  if (isXpeXCommerceRoute(nextUrl.pathname) && !authCookie) {
+  // Phase 16: /xpex-commerce is a standalone, localStorage-first corridor.
+  // It is open by default so manual XpeX operations can run without the legacy
+  // Postiz login wall, but the bypass is scoped only to /xpex-commerce and
+  // subroutes. It does not expose /api, /auth, /analytics, /settings,
+  // /launches, /integrations, /provider, /modal or any other private route.
+  // Set XPEX_COMMERCE_REQUIRE_AUTH=true to send this corridor back through the
+  // normal Postiz authentication flow. The older public preview env remains as
+  // a compatibility diagnostic only; it is no longer required to open XpeX.
+  if (isXpeXCommerceRoute(nextUrl.pathname) && !isXpeXCommerceAuthRequired()) {
+    topResponse.headers.set('x-xpex-standalone-surface', 'open');
+    topResponse.headers.set(
+      'x-xpex-auth-boundary',
+      'postiz-private-routes-preserved'
+    );
+
     if (isXpeXCommercePublicPreviewEnabled()) {
       topResponse.headers.set('x-xpex-preview-route', 'true');
       topResponse.headers.set('x-xpex-preview-gate', 'enabled');
-      return topResponse;
     }
 
-    // Gate disabled by default: unauthenticated XpeX Commerce preview requests
-    // fall through to the existing /auth redirect for safety.
+    return topResponse;
   }
 
   if (!nextUrl.pathname.startsWith('/auth') && !authCookie) {
