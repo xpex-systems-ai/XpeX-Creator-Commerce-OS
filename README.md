@@ -98,6 +98,9 @@ Phase 04 adds controlled local operations to `/xpex-commerce` using browser `loc
 
 Phase 09 adds a safe localStorage-to-backend import workflow and controlled CRUD validation for **XpeX Creator Commerce OS**. New routes `/xpex-commerce/import` and `/xpex-commerce/crud-tests` analyze local demo data, require backend opt-in plus healthy diagnostics before real import, preserve localStorage, and keep Mercado Livre, Dub, n8n, OpenAI, WhatsApp, and paid ads disconnected.
 
+
+Phase 14 adds a safe public preview gate for `/xpex-commerce` and subroutes, controlled by `XPEX_COMMERCE_PUBLIC_PREVIEW_ENABLED=true`, so Vercel previews can show the demo/local-first XpeX surface without removing or weakening Postiz authentication. Postiz private routes, APIs, settings, analytics, OAuth/auth behavior, AGPL posture, backend opt-in, localStorage demo mode, and the no-external-integrations guardrails remain preserved.
+
 Phase 13 prepares **XpeX Creator Commerce OS** for Vercel Deploy Preview and Railway backend/database readiness without activating external integrations. The new `/xpex-commerce/deploy-readiness` route, Vercel guide, Railway guide, and environment checklist keep localStorage demo mode as the first deploy path, preserve backend opt-in, and avoid secrets, Mercado Livre API, Dub, n8n, OpenAI, WhatsApp, paid ads, public redirects, cookies, fingerprinting, or silent tracking.
 
 Phase 08 adds safe backend homologation for XpeX Commerce: an authenticated diagnostics route, a dashboard readiness panel, CRUD smoke-test documentation, and migration readiness checklist. Backend use remains opt-in with `NEXT_PUBLIC_XPEX_COMMERCE_BACKEND_ENABLED=true`; localStorage demo and fallback behavior remain preserved, and Mercado Livre, Dub, n8n, OpenAI, WhatsApp, and paid ads integrations remain disconnected.

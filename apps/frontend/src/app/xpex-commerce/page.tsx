@@ -1,7 +1,7 @@
 'use client';
 
 import { ExportJsonPanel } from './components/local-forms';
-import { SafetyNotice, OperationModeBadge, CampaignCard, MetricCard, ModuleCard, ProductCard, SectionHeader, StatusBadge, XpeXPageShell } from './components';
+import { SafetyNotice, XpeXPublicPreviewNotice, OperationModeBadge, CampaignCard, MetricCard, ModuleCard, ProductCard, SectionHeader, StatusBadge, XpeXPageShell } from './components';
 import { xpexCreatorCommerceMock } from './mock-data';
 import { useXpeXCommerceStore } from './lib/use-xpex-commerce-store';
 
@@ -18,6 +18,7 @@ export default function XpeXCommercePage() {
     { title: 'Criadores', value: state.creators.length, detail: 'Anderso como creator piloto' },
   ];
   return <XpeXPageShell eyebrow="Phase 13 · Deploy Preview e Railway Readiness" title="XpeX Creator Commerce OS" description="Máquina de vendas com produto piloto, criador Anderso, campanha Seu quarto vira palco, métricas manuais, tracking, leads, performance e calendário — preservando localStorage, backend opt-in, importação, CRUD controlado, fallback seguro e sem integrações externas.">
+    <XpeXPublicPreviewNotice />
     <SafetyNotice mode={mode} availability={backendAvailability} notice={operationNotice} />
     <OperationModeBadge mode={mode} availability={backendAvailability} notice={operationNotice} />
     <section className="rounded-[2rem] border border-[#F5B301]/25 bg-[#F5B301]/10 p-6">
